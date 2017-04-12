@@ -131,7 +131,6 @@ let Graphics = function () {
             image = new Image();
 
         image.onload = function () {
-            console.log("onload ran");
             ready = true;
         };
 
@@ -184,23 +183,62 @@ let Graphics = function () {
         };
 
         that.draw = function () {
-            context.save();
+            if(ready){
+                context.save();
 
-            context.drawImage(
-                image,
-                imgIndex.c * spec.tileSize,
-                imgIndex.r * spec.tileSize,
-                spec.tileSize,
-                spec.tileSize,
-                position.x,
-                position.y,
-                spec.width,
-                spec.height
-            );
+                context.drawImage(
+                    image,
+                    imgIndex.c * spec.tileSize,
+                    imgIndex.r * spec.tileSize,
+                    spec.tileSize,
+                    spec.tileSize,
+                    position.x,
+                    position.y,
+                    spec.width,
+                    spec.height
+                );
 
-            context.restore();
+                context.restore();
+            }
         };
 
+        return that;
+    }
+
+    /*
+     Takes spec object. Image spec: { cTileSize: canvas tile size, src:val, tileSize:val }
+     */
+    function imgTileset(spec){
+        let that = {},
+            ready = false,
+            image = new Image();
+
+        image.onload = function () {
+            ready = true;
+            console.log("Image Ready: " + spec.src);
+        };
+        image.src = spec.src;
+
+        // Tile: { x:top left x pixel, y: top left y pixel}, position:{x: canvas x, y: canvas y}
+        that.draw = function (tile, position) {
+            if(ready){
+                context.save();
+
+                context.drawImage(
+                    image,
+                    tile.x,
+                    tile.y,
+                    spec.tileSize,
+                    spec.tileSize,
+                    position.x,
+                    position.y,
+                    spec.cTileSize,
+                    spec.cTileSize
+                );
+
+                context.restore();
+            }
+        };
         return that;
     }
 
@@ -297,6 +335,7 @@ let Graphics = function () {
         Line: line,
         ImgStatic: imgStatic,
         ImgSprite: imgSprite,
+        ImgTileset: imgTileset,
         Text: Text,
         particleDraw: particleDraw,
         getMaxSize: getMaxSize
