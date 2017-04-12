@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+    <div class="state " id="game" hidden>
+        <canvas id="canvasMain" width="1400" height="1600"></canvas>
+        <!-- <div class="row">
+            <div class="col-xs-12 rlPad">
+                <span class="score-container">
+                    Score: <span id="scoreVal">0</span>
+                </span>
+                <img src="img/paddle-large.png" id="life1" class="lifePaddle float-right"/>
+                <img src="img/paddle-large.png" id="life2" class="lifePaddle float-right"/>
+                <img src="img/paddle-large.png" id="life3" class="lifePaddle float-right"/>
+            </div>
+        </div> -->
+    </div>
+    <div class="state playBG" id="main" hidden>
+        <div class="col-xs-12 platform">
+            <img src="img/pokemonLogo.png" id="logo"/><br>
+            <button class="btn btn-primary" data-event="play">New Game</button><br>
+            <button class="btn btn-primary" data-event="score">High Scores</button><br>
+            <button class="btn btn-primary" data-event="controls">Controls</button><br>
+            <button class="btn btn-primary" data-event="credits">Credits</button><br>
+        </div>
+    </div>
+    <div class="state playBG" id="scores" hidden>
+        <div class="col-xs-12 platform">
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Score</th>
+                </tr>
+                <tr>
+                    <td>1.</td>
+                    <td id="hs1">0</td>
+                </tr>
+                <tr>
+                    <td>2.</td>
+                    <td id="hs2">0</td>
+                </tr>
+                <tr>
+                    <td>3.</td>
+                    <td id="hs3">0</td>
+                </tr>
+                <tr>
+                    <td>4.</td>
+                    <td id="hs4">0</td>
+                </tr>
+                <tr>
+                    <td>5.</td>
+                    <td id="hs5">0</td>
+                </tr>
+            </table>
+            <button class="btn btn-primary" data-event="clear">Reset Scores</button>
+        </div>
+    </div>
+    <div class="state playBG" id="credits" hidden>
+        <div class="col-xs-12 platform">
+            Created by TJ Ferrell and Noelle Troester-Solbrig
+        </div>
+    </div>
+    <div class="state" id="load" >
+        This is load state
+        <canvas id="tstCanvas" class="no-border" width="1400" height="1600"></canvas>
+    </div>
+
+    <!-- Libraries -->
+    <script src="js/lib/state.js" type="text/javascript"></script>
+    <script src="js/lib/input.js" type="text/javascript"></script>
+    <script src="js/lib/draw.js" type="text/javascript"></script>
+    <script src="js/lib/random.js" type="text/javascript"></script>
+    <script src="js/lib/particles.js" type="text/javascript"></script>
+    <script src="js/lib/persistance.js" type="text/javascript"></script>
+
+    <!-- States -->
+    <script src="js/states/loadState.js" type="text/javascript"></script>
+    <script src="js/states/mainMenuState.js" type="text/javascript"></script>
+    <script src="js/states/scoreState.js" type="text/javascript"></script>
+    <script src="js/states/controlState.js" type="text/javascript"></script>
+    <script src="js/states/creditState.js" type="text/javascript"></script>
+
+    <script src="js/main.js" type="text/javascript"></script>
+
+</body>
+</html>
