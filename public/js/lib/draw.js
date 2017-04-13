@@ -223,17 +223,18 @@ let Graphics = function () {
         that.draw = function (tile, position) {
             if(ready){
                 context.save();
-
+                context.webkitImageSmoothingEnabled = false;
+                context.mozImageSmoothingEnabled = false;
                 context.drawImage(
-                    image,
-                    tile.x,
-                    tile.y,
+                    image,//image element
+                    tile.x,//source x
+                    tile.y,//source y
                     spec.tileSize,
                     spec.tileSize,
-                    position.x,
-                    position.y,
-                    spec.cTileSize,
-                    spec.cTileSize
+                    position.x, // canvas x
+                    position.y, // canvas y
+                    spec.cTileSize, //canvas width
+                    spec.cTileSize // canvas height
                 );
 
                 context.restore();

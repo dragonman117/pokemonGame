@@ -11,7 +11,7 @@ function mainMenuState(elementId, debug=false) {
 
     mainMenu.addInput("play");
     mainMenu.addInput("score");
-    mainMenu.addInput("controls")
+    mainMenu.addInput("controls");
     mainMenu.addInput("credits");
 
     let mainMenuUpdate = function (time, inputs) {

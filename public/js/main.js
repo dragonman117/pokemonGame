@@ -16,18 +16,16 @@ let tstCanvas = document.getElementById("tstCanvas");
 let height = tstCanvas.offsetHeight;
 
 let states = document.getElementsByClassName("state");
-console.log(states.length);
-console.log(states);
 for(let i = 0; i < states.length; i++){
     let tmp = states.item(i);
-    tmp.setAttribute("style","min-height: " + height + "px;");
+    //tmp.setAttribute("style","min-height: " + height + "px;");
 }
 
 let highScoreId = {"first":"hs1", "second":"hs2", "third": "hs3", "fourth":"hs4", "fifth":"hs5"};
 
 //Initialize Draw Library
 Pokemon.draw = Graphics();
-Pokemon.draw.initalize("canvasMain", 1400, 1600);
+Pokemon.draw.initalize("canvasMain", 208, 208);
 
 Pokemon.store = persistantStorage("pokemonGame");
 
@@ -35,7 +33,7 @@ Pokemon.store = persistantStorage("pokemonGame");
 Pokemon.states = {
     load: loadState("load"),
     mainMenu: mainMenuState("main", Pokemon.debug),
-    // game: gameState("game", Pokemon.draw, "scoreVal", lifeIdentifiers, Pokemon.store, Pokemon.debug),
+    game: gameState("game", Pokemon.draw, Pokemon.store, Pokemon.debug),
     score: scoreState("scores", highScoreId, Pokemon.store, Pokemon.debug),
     controls: controlState("controls", Pokemon.debug),
     credits: creditState("credits", Pokemon.debug)

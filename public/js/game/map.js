@@ -7,11 +7,13 @@ let Map = function(mapPath, draw, canvasTileSize){
     let tileSets = {}; // array of tile sets (actual image)
     let mapFile = {};
     let masterMap = [];
+    let startPos = {x:0, y:0};
     let ready = false;
+    let onReadyFn = NaN;
 
 
     //Helper Functions
-    fetchMap = function () {
+    let fetchMap = function () {
         return new Promise(function(response, reject){
             fetch(mapPath).then(response=>response.json()).then(json=>{
                 mapFile = json;
@@ -19,7 +21,7 @@ let Map = function(mapPath, draw, canvasTileSize){
             });
         })
     };
-    processMap = function () {
+    let processMap = function () {
         //Build Tiles  :D
         for(let i = 0; i < mapFile.tilesets.length; i++){
             let spec = {
@@ -33,7 +35,7 @@ let Map = function(mapPath, draw, canvasTileSize){
             let imgHeight = mapFile.tilesets[i].imageheight - 2*mapFile.tilesets[i].margin;
             let tileSize = mapFile.tilesets[i].tilewidth;
             let tileCount = mapFile.tilesets[i].firstgid;
-            for(let y = 0; y < imgHeight-tileSize; y += tileSize + mapFile.tilesets[i].margin){
+            for(let y = 0; y < imgHeight; y += tileSize + mapFile.tilesets[i].margin){
                 for(let x = 0; x < imgWidth; x += tileSize + mapFile.tilesets[i].margin){
                     tiles[tileCount] = {
                         x: mapFile.tilesets[i].margin + x,
@@ -51,6 +53,13 @@ let Map = function(mapPath, draw, canvasTileSize){
                     }
                     tileCount++;
                 }
+            }
+        }
+        //See if you have new start pos
+        if(mapFile.hasOwnProperty("properties")){
+            if(mapFile.properties.hasOwnProperty("startX") && mapFile.properties.hasOwnProperty("startY")){
+                startPos.x = mapFile.properties.startX;
+                startPos.y = mapFile.properties.startY;
             }
         }
 
@@ -115,30 +124,31 @@ let Map = function(mapPath, draw, canvasTileSize){
             }
         }
 
-        console.log(masterMap);
         console.log(tiles);
-
         //Indicate ready to draw/work with
         ready = true;
+        if(onReadyFn) onReadyFn();
     };
-    initMap = function () {
+    let initMap = function () {
         fetchMap().then(data=>{
             processMap();
-        })
+        });
     };
 
     //Export Functions
     //Grids: {x1,x2,y1,y2}
-    drawMap = function (grids) {
+    let drawMap = function (grids, offset) {
         if(ready){
-            let ix = 0;
-            let iy = 0;
+            draw.beginRender();
+            let ix = offset.x;
+            let iy = offset.y;
             let height = mapFile.height;
             let width = mapFile.width;
             for(let i = grids.y1; i < grids.y2; i++){
-                ix = 0;
+                ix = offset.x;
                 for(let j = grids.x1; j < grids.x2; j++){
                     let pos = {x:ix, y:iy};
+                    //console.log(pos);
                     for(let x = 0; x < masterMap[i][j].drawStack.length; x++){
                         //masterMap[i][j].drawStack[x]
                         let tile = tiles[masterMap[i][j].drawStack[x]];
@@ -148,13 +158,26 @@ let Map = function(mapPath, draw, canvasTileSize){
                 }
                 iy += canvasTileSize;
             }
+            let keys = Object.keys(tileSets);
         }
+    };
+    let getStart = function (){
+        return startPos;
+    };
+    let onReady = function (fn) {
+        onReadyFn = fn;
+    };
+    let getMapSize = function () {
+        return {r:mapFile.height, c:mapFile.width}
     };
 
     //Startup
     initMap();
 
     return{
-        draw:drawMap
+        draw:drawMap,
+        getStart:getStart,
+        onReady:onReady,
+        getMapSize:getMapSize
     }
 };

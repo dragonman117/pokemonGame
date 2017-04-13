@@ -40,3 +40,20 @@ button {
   text-align: center;
   text-shadow: 1px 1px 0 #444;
 }
+
+.container{
+  width: 80vw;
+  margin-left: 10vw;
+  max-height: 100%;
+  overflow: hidden;
+}
+#canvasMain{
+  width: 100%;
+  background-color: rgba(135, 207, 255, 0.33);
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -o-crisp-edges;
+  image-rendering: optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}
