@@ -33,7 +33,7 @@ function gameState(elementId, draw, save, debug=false){
             }
 
             if(inputs[KeyEvent.DOM_VK_UP]){
-                gps.move(time, "up");
+                gps.move(now, "up");
                 player.move(now, "up");
                 gps.onMoveEnd(function () {
                     player.stopMove("up");
@@ -42,7 +42,7 @@ function gameState(elementId, draw, save, debug=false){
                 gps.stopMove("up");
             }
             if(inputs[KeyEvent.DOM_VK_DOWN]){
-                gps.move(time, "down");
+                gps.move(now, "down");
                 player.move(now, "down");
                 gps.onMoveEnd(function () {
                     player.stopMove("down");
@@ -51,7 +51,7 @@ function gameState(elementId, draw, save, debug=false){
                 gps.stopMove("down");
             }
             if(inputs[KeyEvent.DOM_VK_RIGHT]){
-                gps.move(time, "right");
+                gps.move(now, "right");
                 player.move(now, "right");
                 gps.onMoveEnd(function () {
                     player.stopMove("right");
@@ -60,7 +60,7 @@ function gameState(elementId, draw, save, debug=false){
                 gps.stopMove("right");
             }
             if(inputs[KeyEvent.DOM_VK_LEFT]){
-                gps.move(time, "left");
+                gps.move(now, "left");
                 player.move(now, "left");
                 gps.onMoveEnd(function () {
                     player.stopMove("left");

@@ -92,7 +92,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
     };
 
     let gpsUpdate = function (time) {
-        let now = performance.now();
+        let now = time;
         if(moveInProgress){
             let current = null;
             if(movement.up) current = "up";
@@ -109,7 +109,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
                 if(movement.right)logicalPosRelMap.x += 1;
                 if(caryOn){
                     moveOffset = speedDivisor;
-                    movement[current] = performance.now();
+                    movement[current] = time;
                 }else{
                     movement[current] = null;
                     moveOffset = 0;
@@ -134,7 +134,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
                 onMoveEndFn();
                 onMoveEndFn = false;
             }
-            movement[dir] = performance.now();
+            movement[dir] = time;
             moveInProgress = true;
             caryOn = true;
         }
