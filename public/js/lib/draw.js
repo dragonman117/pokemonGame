@@ -215,7 +215,6 @@ let Graphics = function () {
 
         image.onload = function () {
             ready = true;
-            console.log("Image Ready: " + spec.src);
         };
         image.src = spec.src;
 

@@ -35,8 +35,9 @@ let Map = function(mapPath, draw, canvasTileSize){
             let imgHeight = mapFile.tilesets[i].imageheight - 2*mapFile.tilesets[i].margin;
             let tileSize = mapFile.tilesets[i].tilewidth;
             let tileCount = mapFile.tilesets[i].firstgid;
-            for(let y = 0; y < imgHeight; y += tileSize + mapFile.tilesets[i].margin){
-                for(let x = 0; x < imgWidth; x += tileSize + mapFile.tilesets[i].margin){
+            for(let y = 0; y < imgHeight; y += tileSize + mapFile.tilesets[i].spacing){
+                let x = 0;
+                for(let c = 0; c < mapFile.tilesets[i].columns; c++){
                     tiles[tileCount] = {
                         x: mapFile.tilesets[i].margin + x,
                         y: mapFile.tilesets[i].margin + y,
@@ -52,6 +53,7 @@ let Map = function(mapPath, draw, canvasTileSize){
                         }
                     }
                     tileCount++;
+                    x += tileSize + mapFile.tilesets[i].spacing
                 }
             }
         }
@@ -124,10 +126,10 @@ let Map = function(mapPath, draw, canvasTileSize){
             }
         }
 
-        console.log(tiles);
         //Indicate ready to draw/work with
         ready = true;
         if(onReadyFn) onReadyFn();
+        console.log(masterMap);
     };
     let initMap = function () {
         fetchMap().then(data=>{
