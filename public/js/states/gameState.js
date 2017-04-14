@@ -9,6 +9,24 @@ function gameState(elementId, draw, storage, debug=false){
     let gps = new Gps(draw, canvasTileSize, 13);
     let player = new Player(draw, canvasTileSize);
     let currentMove = {u:false, r:false, d:false, l:false};
+    let storageMap = {
+        up: "controlUp",
+        down: "controlDown",
+        left: "controlLeft",
+        right: "controlRight",
+        start: "controlStart",
+        a: "controlA",
+        b: "controlB"
+    };
+    let controlKeys = {
+        up: {key: KeyEvent.DOM_VK_UP, name: "up arrow"},
+        down: {key: KeyEvent.DOM_VK_DOWN, name: "down arrow"},
+        left: {key: KeyEvent.DOM_VK_LEFT, name: "left arrow"},
+        right: {key: KeyEvent.DOM_VK_RIGHT, name: "right arrow"},
+        start: {key: KeyEvent.DOM_VK_ENTER, name: "enter"},
+        a: {key: KeyEvent.DOM_VK_A, name: "A"},
+        b: {key: KeyEvent.DOM_VK_B, name: "B"}
+    };
 
     map.onReady(function () {
         gps.setMapSize(map.getMapSize());
@@ -17,19 +35,11 @@ function gameState(elementId, draw, storage, debug=false){
     });
 
     // game.addInput(KeyEvent.DOM_VK_ESCAPE);
-    // game.addInput(storage.fetch("controlUp"));
-    // game.addInput(storage.fetch("controlDown"));
-    // game.addInput(storage.fetch("controlRight"));
-    // game.addInput(storage.fetch("controlLeft"));
-    // game.addInput(storage.fetch("controlStart"));
-    // game.addInput(storage.fetch("controlA"));
-    // game.addInput(storage.fetch("controlB"));
+    // game.addInput(KeyEvent.DOM_VK_UP);
+    // game.addInput(KeyEvent.DOM_VK_DOWN);
+    // game.addInput(KeyEvent.DOM_VK_RIGHT);
+    // game.addInput(KeyEvent.DOM_VK_LEFT);
 
-    game.addInput(KeyEvent.DOM_VK_ESCAPE);
-    game.addInput(KeyEvent.DOM_VK_UP);
-    game.addInput(KeyEvent.DOM_VK_DOWN);
-    game.addInput(KeyEvent.DOM_VK_RIGHT);
-    game.addInput(KeyEvent.DOM_VK_LEFT);
 
     let gameUpdate = function (time, inputs) {
         let now = performance.now();
@@ -41,7 +51,7 @@ function gameState(elementId, draw, storage, debug=false){
                 game.changeState("mainMenu");
             }
 
-            if(inputs[KeyEvent.DOM_VK_UP]){
+            if(inputs[controlKeys.up.key]){
                 gps.move(now, "up");
                 player.move(now, "up");
                 gps.onMoveEnd(function () {
@@ -50,7 +60,7 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 gps.stopMove("up");
             }
-            if(inputs[KeyEvent.DOM_VK_DOWN]){
+            if(inputs[controlKeys.down.key]){
                 gps.move(now, "down");
                 player.move(now, "down");
                 gps.onMoveEnd(function () {
@@ -59,7 +69,7 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 gps.stopMove("down");
             }
-            if(inputs[KeyEvent.DOM_VK_RIGHT]){
+            if(inputs[controlKeys.right.key]){
                 gps.move(now, "right");
                 player.move(now, "right");
                 gps.onMoveEnd(function () {
@@ -68,7 +78,7 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 gps.stopMove("right");
             }
-            if(inputs[KeyEvent.DOM_VK_LEFT]){
+            if(inputs[controlKeys.left.key]){
                 gps.move(now, "left");
                 player.move(now, "left");
                 gps.onMoveEnd(function () {
@@ -91,6 +101,24 @@ function gameState(elementId, draw, storage, debug=false){
     };
 
     game.init(gameRender, gameUpdate);
+    
+    game.onActivate(function () {
+        let sKeys = Object.keys(storageMap);
+        for(let i = 0; i < sKeys.length; i++){
+            if(storage.contains(sKeys[i])){
+                controlKeys[sKeys[i]] = storage.fetch(sKeys[i]);
+            }
+        }
+        console.log(controlKeys);
+        game.addInput(KeyEvent.DOM_VK_ESCAPE);
+        game.addInput(controlKeys.up.key);
+        game.addInput(controlKeys.down.key);
+        game.addInput(controlKeys.left.key);
+        game.addInput(controlKeys.right.key);
+        game.addInput(controlKeys.start.key);
+        game.addInput(controlKeys.a.key);
+        game.addInput(controlKeys.b.key);
+    });
 
     return game;
 }

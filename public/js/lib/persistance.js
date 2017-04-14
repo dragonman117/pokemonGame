@@ -12,6 +12,7 @@ function persistantStorage(masterKey){
 
     function add(key, value){
         values[key] = value;
+        console.log("I has run???");
         localStorage[masterKey] = JSON.stringify(values);
     }
 
