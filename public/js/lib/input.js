@@ -7,6 +7,7 @@ function input () {
     let keyLog = {};
     let pendingEvents = [];
     let clickEvents = [];
+    let keyToGlobalObj = {};
 
     let keyPressFn = null;
 
@@ -74,9 +75,22 @@ function input () {
         return pendingEvents;
     }
 
+    function keyToGlobal(key){
+        return keyToGlobalObj[key];
+    }
+
+    function init(){
+        let keys = Object.keys(KeyEvent);
+        for(let i =0; i < keys.length; i++){
+            keyToGlobalObj[KeyEvent[keys[i]]] = keys[i];
+        }
+    }
+    init();
+
     return {
         onNextKeyPress: onNextKeyPress,
-        fetchInput:fetchInput
+        fetchInput:fetchInput,
+        keyToGlobal:keyToGlobal
     }
 }
 

@@ -19,7 +19,7 @@ function controlState(elementId, storage, input, debug=false){
         start: {key: KeyEvent.DOM_VK_ENTER, name: "enter"},
         a: {key: KeyEvent.DOM_VK_A, name: "A"},
         b: {key: KeyEvent.DOM_VK_B, name: "B"}
-    }
+    };
 
     controls.addInput(KeyEvent.DOM_VK_ESCAPE);
     controls.addInput("up");
@@ -40,7 +40,7 @@ function controlState(elementId, storage, input, debug=false){
             }
             if(inputs["up"]){
                 input.onNextKeyPress(function(event){
-                    controlKeys.up.key = event.keyCode;
+                    controlKeys.up.key = input.keyToGlobal(event.keyCode);
                     controlKeys.up.name = event.key;
                     storage.add("controlUp", controlKeys.up);
                     let up = document.getElementById("up");
@@ -50,7 +50,7 @@ function controlState(elementId, storage, input, debug=false){
             else if(inputs["down"]){
                 input.onNextKeyPress(function(event){
                     console.log(event);
-                    controlKeys.down.key = event.keyCode;
+                    controlKeys.down.key = input.keyToGlobal(event.keyCode);
                     controlKeys.down.name = event.key;
                     storage.add("controlDown", controlKeys.down);
                     let down = document.getElementById("down");
@@ -60,7 +60,7 @@ function controlState(elementId, storage, input, debug=false){
             else if(inputs["left"]){
                 input.onNextKeyPress(function(event){
                     console.log(event);
-                    controlKeys.left.key = event.keyCode;
+                    controlKeys.left.key = input.keyToGlobal(event.keyCode);
                     controlKeys.left.name = event.key;
                     storage.add("controlLeft", controlKeys.left);
                     let left = document.getElementById("left");
@@ -70,7 +70,7 @@ function controlState(elementId, storage, input, debug=false){
             else if(inputs["right"]){
                 input.onNextKeyPress(function(event){
                     console.log(event);
-                    controlKeys.right.key = event.keyCode;
+                    controlKeys.right.key = input.keyToGlobal(event.keyCode);
                     controlKeys.right.name = event.key;
                     storage.add("controlRight", controlKeys.right);
                     let right = document.getElementById("right");
@@ -80,7 +80,7 @@ function controlState(elementId, storage, input, debug=false){
             else if(inputs["start"]){
                 input.onNextKeyPress(function(event){
                     console.log(event);
-                    controlKeys.start.key = event.keyCode;
+                    controlKeys.start.key = input.keyToGlobal(event.keyCode);
                     controlKeys.start.name = event.key;
                     storage.add("controlStart", controlKeys.start);
                     let start = document.getElementById("start");
@@ -90,7 +90,7 @@ function controlState(elementId, storage, input, debug=false){
             else if(inputs["a"]){
                 input.onNextKeyPress(function(event){
                     console.log(event);
-                    controlKeys.a.key = event.keyCode;
+                    controlKeys.a.key = input.keyToGlobal(event.keyCode);
                     controlKeys.a.name = event.key;
                     storage.add("controlA", controlKeys.a);
                     let a = document.getElementById("a");
@@ -100,7 +100,7 @@ function controlState(elementId, storage, input, debug=false){
             else if(inputs["b"]){
                 input.onNextKeyPress(function(event){
                     console.log(event);
-                    controlKeys.b.key = event.keyCode;
+                    controlKeys.b.key = input.keyToGlobal(event.keyCode);
                     controlKeys.b.name = event.key;
                     storage.add("controlB", controlKeys.b);
                     let b = document.getElementById("b");
