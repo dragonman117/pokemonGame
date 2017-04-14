@@ -14,13 +14,67 @@ let Player = function (draw, canvasTileSize) {
             x: 0,
             y: 0,
         },
-        tileSize: 32,
+        tileSize: 16,
         width:canvasTileSize,
         height: canvasTileSize,
         source: "/img/playerSheet.png"
     };
     let playerImg = draw.ImgSprite(spec);
     let ready = false;
+    let speedDivisor = 125;
+
+    let movementAnimations = {
+        'down':{
+            animation:[
+                {r:0,c:1},
+                {r:0,c:0},
+                {r:0,c:1},
+                {r:0,c:2}
+            ],
+            index: 0,
+            stationary: {r:0,c:1}
+        },
+        'up':{
+            animation:[
+                {r:1,c:1},
+                {r:1,c:0},
+                {r:1,c:1},
+                {r:1,c:2}
+            ],
+            index: 0,
+            stationary: {r:1,c:1}
+        },
+        'right':{
+            animation:[
+                {r:3,c:1},
+                {r:3,c:0},
+                {r:3,c:1},
+                {r:3,c:2}
+            ],
+            index: 0,
+            stationary: {r:3,c:1}
+        },
+        'left':{
+            animation:[
+                {r:2,c:1},
+                {r:2,c:0},
+                {r:2,c:1},
+                {r:2,c:2}
+            ],
+            index: 0,
+            stationary: {r:2,c:1}
+        }
+    };
+    let movement = {
+        up:false,
+        down:false,
+        left:false,
+        right:false
+    };
+    let moveInProgress = false;
+
+    let currentRest = movementAnimations.down.stationary;
+    let currentDraw = currentRest;
 
     let playerDraw = function () {
         if(ready){
@@ -35,8 +89,44 @@ let Player = function (draw, canvasTileSize) {
         ready = true;
     };
 
+    let playerUpdate = function (time) {
+        if(moveInProgress){
+            //Animate
+            //let now = performance.now();
+            let current = null;
+            if(movement.up) current = 'up';
+            if(movement.down) current = 'down';
+            if(movement.right) current = "right";
+            if(movement.left) current = "left";
+            let timeDiff = time - movement[current];
+            let indexOffset = Math.floor(timeDiff/speedDivisor)%movementAnimations[current].animation.length;
+            currentDraw = movementAnimations[current].animation[indexOffset];
+        }else{
+            currentDraw = currentRest;
+        }
+        playerImg.update(pos,currentDraw);
+    };
+
+    let move = function (time, dir) {
+        if(!moveInProgress){
+            movement[dir] = time;
+            currentRest = movementAnimations[dir].stationary;
+            moveInProgress = true;
+        }
+    };
+
+    let stopMove = function (dir) {
+        if(movement[dir]){
+            movement[dir] = false;
+            moveInProgress = false;
+        }
+    };
+
     return {
         draw:playerDraw,
-        setStartPos:setStartPos
+        setStartPos:setStartPos,
+        move:move,
+        stopMove:stopMove,
+        playerUpdate:playerUpdate
     }
 };
