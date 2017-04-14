@@ -22,6 +22,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
     let caryOn = false;
     let moveOffset = 0;
     let speedDivisor = 16;
+    let onMoveEndFn = NaN;
 
 
     let playerPos = {x:tileSize*(logicalPos.x-1), y:tileSize*(logicalPos.y-1)};
@@ -113,6 +114,10 @@ let Gps = function (draw, tileSize, canvasGrid) {
                     movement[current] = null;
                     moveOffset = 0;
                     moveInProgress = false;
+                    if(onMoveEndFn){
+                        onMoveEndFn();
+                        onMoveEndFn = NaN; //remove the fn after calling...
+                    }
                 }
             }
             genMapPos();
@@ -125,6 +130,10 @@ let Gps = function (draw, tileSize, canvasGrid) {
 
     let move = function (time, dir) {
         if(!moveInProgress){
+            if(onMoveEndFn){ // see if this fixes bug that immediate switch direction can mess up animations...
+                onMoveEndFn();
+                onMoveEndFn = false;
+            }
             movement[dir] = performance.now();
             moveInProgress = true;
             caryOn = true;
@@ -137,6 +146,12 @@ let Gps = function (draw, tileSize, canvasGrid) {
         }
     };
 
+    let onMoveEnd = function (fn) {
+        if(!onMoveEndFn){
+            onMoveEndFn = fn;
+        }
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -145,6 +160,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
         getOffset:getOffset,
         gpsUpdate:gpsUpdate,
         move:move,
-        stopMove:stopMove
+        stopMove:stopMove,
+        onMoveEnd:onMoveEnd
     }
 };

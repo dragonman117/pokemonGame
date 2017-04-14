@@ -23,6 +23,7 @@ function gameState(elementId, draw, save, debug=false){
     game.addInput(KeyEvent.DOM_VK_LEFT);
 
     let gameUpdate = function (time, inputs) {
+        let now = performance.now();
         return new Promise(function (resolve, reject) {
             if(inputs[KeyEvent.DOM_VK_ESCAPE]){
                 if(debug){
@@ -33,26 +34,43 @@ function gameState(elementId, draw, save, debug=false){
 
             if(inputs[KeyEvent.DOM_VK_UP]){
                 gps.move(time, "up");
+                player.move(now, "up");
+                gps.onMoveEnd(function () {
+                    player.stopMove("up");
+                })
             }else{
                 gps.stopMove("up");
             }
             if(inputs[KeyEvent.DOM_VK_DOWN]){
                 gps.move(time, "down");
+                player.move(now, "down");
+                gps.onMoveEnd(function () {
+                    player.stopMove("down");
+                })
             }else{
                 gps.stopMove("down");
             }
             if(inputs[KeyEvent.DOM_VK_RIGHT]){
                 gps.move(time, "right");
+                player.move(now, "right");
+                gps.onMoveEnd(function () {
+                    player.stopMove("right");
+                })
             }else{
                 gps.stopMove("right");
             }
             if(inputs[KeyEvent.DOM_VK_LEFT]){
                 gps.move(time, "left");
+                player.move(now, "left");
+                gps.onMoveEnd(function () {
+                    player.stopMove("left");
+                })
             }else{
                 gps.stopMove("left");
             }
 
-            gps.gpsUpdate(time);
+            gps.gpsUpdate(now);
+            player.playerUpdate(now);
             resolve();
         })
     };
