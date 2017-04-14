@@ -22,6 +22,7 @@ for(let i = 0; i < states.length; i++){
 }
 
 let highScoreId = {"first":"hs1", "second":"hs2", "third": "hs3", "fourth":"hs4", "fifth":"hs5"};
+let controlsId = {"controlUp": "up", "controlDown": "down", "controlLeft": "left", "controlRight": "right", "controlStart": "start", "controlA": "a", "controlB": "b"};
 
 //Initialize Draw Library
 Pokemon.draw = Graphics();
@@ -29,18 +30,19 @@ Pokemon.draw.initalize("canvasMain", 208, 208);
 
 Pokemon.store = persistantStorage("pokemonGame");
 
+//Initialize Input
+Pokemon.input = input();
+
 //Include Game States inside Pokemons states
 Pokemon.states = {
     load: loadState("load"),
     mainMenu: mainMenuState("main", Pokemon.debug),
     game: gameState("game", Pokemon.draw, Pokemon.store, Pokemon.debug),
     score: scoreState("scores", highScoreId, Pokemon.store, Pokemon.debug),
-    controls: controlState("controls", Pokemon.debug),
+    controls: controlState("controls", Pokemon.store, Pokemon.input, Pokemon.debug),
     credits: creditState("credits", Pokemon.debug)
     // pause: pauseState("pause", Pokemon.debug)
 };
-//Initialize Input
-Pokemon.input = input();
 
 //Game Main Loop
 Pokemon.main = (function () {

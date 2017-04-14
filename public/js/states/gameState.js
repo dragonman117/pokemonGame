@@ -2,7 +2,7 @@
  * Created by timothyferrell on 4/11/17.
  */
 
-function gameState(elementId, draw, save, debug=false){
+function gameState(elementId, draw, storage, debug=false){
     let canvasTileSize = 16;
     let game = state(elementId, "Game");
     let map = new Map("/js/maps/cmap1.json", draw, canvasTileSize);
@@ -15,6 +15,15 @@ function gameState(elementId, draw, save, debug=false){
         gps.setPlayerInitialPos(map.getStart());
         player.setStartPos(gps.getPlayerPos());
     });
+
+    // game.addInput(KeyEvent.DOM_VK_ESCAPE);
+    // game.addInput(storage.fetch("controlUp"));
+    // game.addInput(storage.fetch("controlDown"));
+    // game.addInput(storage.fetch("controlRight"));
+    // game.addInput(storage.fetch("controlLeft"));
+    // game.addInput(storage.fetch("controlStart"));
+    // game.addInput(storage.fetch("controlA"));
+    // game.addInput(storage.fetch("controlB"));
 
     game.addInput(KeyEvent.DOM_VK_ESCAPE);
     game.addInput(KeyEvent.DOM_VK_UP);

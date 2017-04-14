@@ -8,19 +8,32 @@ function input () {
     let pendingEvents = [];
     let clickEvents = [];
 
+    let keyPressFn = null;
+
     window.addEventListener('keydown', keyPress);
     window.addEventListener('keyup', keyRelease);
     window.addEventListener('click', clickHandler);
+
+
+    function onNextKeyPress(fn){
+        keyPressFn = fn;
+    }
 
     /**
      * Triggers on key press and marks a key as active
      * @param e event for key down
      */
     function keyPress(e) {
-        if(!keyLog.hasOwnProperty(e.keyCode)){
-            eventList.push(e.keyCode);
+        if(!keyPressFn){
+            if(!keyLog.hasOwnProperty(e.keyCode)){
+                eventList.push(e.keyCode);
+            }
+            keyLog[e.keyCode] = e.timestamp;
         }
-        keyLog[e.keyCode] = e.timestamp;
+        else{
+            keyPressFn(e);
+            keyPressFn = null;
+        }
     }
 
     /**
@@ -62,6 +75,7 @@ function input () {
     }
 
     return {
+        onNextKeyPress: onNextKeyPress,
         fetchInput:fetchInput
     }
 }
