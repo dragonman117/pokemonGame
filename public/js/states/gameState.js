@@ -50,8 +50,7 @@ function gameState(elementId, draw, storage, debug=false){
                 }
                 game.changeState("mainMenu");
             }
-
-            if(inputs[controlKeys.up.key]){
+            if(inputs[KeyEvent[controlKeys.up.key]]){
                 gps.move(now, "up");
                 player.move(now, "up");
                 gps.onMoveEnd(function () {
@@ -60,7 +59,7 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 gps.stopMove("up");
             }
-            if(inputs[controlKeys.down.key]){
+            if(inputs[KeyEvent[controlKeys.down.key]]){
                 gps.move(now, "down");
                 player.move(now, "down");
                 gps.onMoveEnd(function () {
@@ -69,7 +68,7 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 gps.stopMove("down");
             }
-            if(inputs[controlKeys.right.key]){
+            if(inputs[KeyEvent[controlKeys.right.key]]){
                 gps.move(now, "right");
                 player.move(now, "right");
                 gps.onMoveEnd(function () {
@@ -78,7 +77,7 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 gps.stopMove("right");
             }
-            if(inputs[controlKeys.left.key]){
+            if(inputs[KeyEvent[controlKeys.left.key]]){
                 gps.move(now, "left");
                 player.move(now, "left");
                 gps.onMoveEnd(function () {
@@ -105,19 +104,18 @@ function gameState(elementId, draw, storage, debug=false){
     game.onActivate(function () {
         let sKeys = Object.keys(storageMap);
         for(let i = 0; i < sKeys.length; i++){
-            if(storage.contains(sKeys[i])){
-                controlKeys[sKeys[i]] = storage.fetch(sKeys[i]);
+            if(storage.contains(storageMap[sKeys[i]])){
+                controlKeys[sKeys[i]] = storage.fetch(storageMap[sKeys[i]]);
             }
         }
-        console.log(controlKeys);
         game.addInput(KeyEvent.DOM_VK_ESCAPE);
-        game.addInput(controlKeys.up.key);
-        game.addInput(controlKeys.down.key);
-        game.addInput(controlKeys.left.key);
-        game.addInput(controlKeys.right.key);
-        game.addInput(controlKeys.start.key);
-        game.addInput(controlKeys.a.key);
-        game.addInput(controlKeys.b.key);
+        game.addInput(KeyEvent[controlKeys.up.key]);
+        game.addInput(KeyEvent[controlKeys.down.key]);
+        game.addInput(KeyEvent[controlKeys.left.key]);
+        game.addInput(KeyEvent[controlKeys.right.key]);
+        game.addInput(KeyEvent[controlKeys.start.key]);
+        game.addInput(KeyEvent[controlKeys.a.key]);
+        game.addInput(KeyEvent[controlKeys.b.key]);
     });
 
     return game;
