@@ -11,6 +11,36 @@ button {
     margin: 3px;
 }
 
+#controls .btn-primary:hover {
+  background: #f00;
+  background: -webkit-linear-gradient(#f00, #f00 50%, #fff 50%, #fff);
+  background: linear-gradient(#f00, #f00 50%, #fff 50%, #fff);
+  border: 3px solid #000;
+  border-radius: 5px;
+  color: #fff;
+  display: inline-block;
+  padding: 8px 20px;
+  font: normal 700 12px/1 "Pokemon GB", sans-serif;
+  text-align: center;
+  text-shadow: 1px 1px 0 #000;
+}
+#controls .btn-primary:focus,
+#controls .btn-primary:active,
+#controls .btn-primary {
+  color: #ffffff;
+  background: #f00;
+  background: -webkit-linear-gradient(#f00, #f00 50%, #fff 50%, #fff);
+  background: linear-gradient(#f00, #f00 50%, #fff 50%, #fff);
+  border: 3px solid #000;
+  border-radius: 5px;
+  color: #000;
+  display: inline-block;
+  padding: 8px 20px;
+  font: normal 700 12px/1 "Pokemon GB", sans-serif;
+  text-align: center;
+  text-shadow: 1px 1px 0 #444;
+}
+
 .btn-primary:hover {
   background: #f00;
   background: -webkit-linear-gradient(#f00, #f00 50%, #fff 50%, #fff);
@@ -39,6 +69,10 @@ button {
   font: normal 700 16px/1 "Pokemon GB", sans-serif;
   text-align: center;
   text-shadow: 1px 1px 0 #444;
+}
+
+h3 {
+    font: normal 700 12px/1 "Pokemon GB", sans-serif;
 }
 
 .container{
