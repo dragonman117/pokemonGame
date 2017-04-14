@@ -11,15 +11,47 @@ function controlState(elementId, storage, input, debug=false){
     let keyCode;
     let waitingForKey = false;
 
-    let controlKeys = {
-        up: {key: KeyEvent.DOM_VK_UP, name: "up arrow"},
-        down: {key: KeyEvent.DOM_VK_DOWN, name: "down arrow"},
-        left: {key: KeyEvent.DOM_VK_LEFT, name: "left arrow"},
-        right: {key: KeyEvent.DOM_VK_RIGHT, name: "right arrow"},
-        start: {key: KeyEvent.DOM_VK_ENTER, name: "enter"},
-        a: {key: KeyEvent.DOM_VK_A, name: "A"},
-        b: {key: KeyEvent.DOM_VK_B, name: "B"}
+    let up = document.getElementById("up");
+    let down = document.getElementById("down");
+    let left = document.getElementById("left");
+    let right = document.getElementById("right");
+    let start = document.getElementById("start");
+    let a = document.getElementById("a");
+    let b = document.getElementById("b");
+
+    let storageMap = {
+        up: "controlUp",
+        down: "controlDown",
+        left: "controlLeft",
+        right: "controlRight",
+        start: "controlStart",
+        a: "controlA",
+        b: "controlB"
     };
+    let controlKeys = {
+        up: {key: KeyEvent.DOM_VK_UP, name: "ArrowUp"},
+        down: {key: KeyEvent.DOM_VK_DOWN, name: "ArrowDown"},
+        left: {key: KeyEvent.DOM_VK_LEFT, name: "ArrowLeft"},
+        right: {key: KeyEvent.DOM_VK_RIGHT, name: "ArrowRight"},
+        start: {key: KeyEvent.DOM_VK_ENTER, name: "enter"},
+        a: {key: KeyEvent.DOM_VK_A, name: "a"},
+        b: {key: KeyEvent.DOM_VK_B, name: "b"}
+    };
+
+    let sKeys = Object.keys(storageMap);
+    for(let i = 0; i < sKeys.length; i++){
+        if(storage.contains(storageMap[sKeys[i]])){
+            controlKeys[sKeys[i]] = storage.fetch(storageMap[sKeys[i]]);
+        }
+    }
+
+    up.innerHTML = controlKeys.up.name;
+    down.innerHTML = controlKeys.down.name;
+    left.innerHTML = controlKeys.left.name;
+    right.innerHTML = controlKeys.right.name;
+    start.innerHTML = controlKeys.start.name;
+    a.innerHTML = controlKeys.a.name;
+    b.innerHTML = controlKeys.b.name;
 
     controls.addInput(KeyEvent.DOM_VK_ESCAPE);
     controls.addInput("up");
@@ -43,7 +75,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.up.key = input.keyToGlobal(event.keyCode);
                     controlKeys.up.name = event.key;
                     storage.add("controlUp", controlKeys.up);
-                    let up = document.getElementById("up");
                     up.innerHTML = event.key;
                 });
             }
@@ -53,7 +84,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.down.key = input.keyToGlobal(event.keyCode);
                     controlKeys.down.name = event.key;
                     storage.add("controlDown", controlKeys.down);
-                    let down = document.getElementById("down");
                     down.innerHTML = event.key;
                 });
             }
@@ -63,7 +93,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.left.key = input.keyToGlobal(event.keyCode);
                     controlKeys.left.name = event.key;
                     storage.add("controlLeft", controlKeys.left);
-                    let left = document.getElementById("left");
                     left.innerHTML = event.key;
                 });
             }
@@ -73,7 +102,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.right.key = input.keyToGlobal(event.keyCode);
                     controlKeys.right.name = event.key;
                     storage.add("controlRight", controlKeys.right);
-                    let right = document.getElementById("right");
                     right.innerHTML = event.key;
                 });
             }
@@ -83,7 +111,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.start.key = input.keyToGlobal(event.keyCode);
                     controlKeys.start.name = event.key;
                     storage.add("controlStart", controlKeys.start);
-                    let start = document.getElementById("start");
                     start.innerHTML = event.key;
                 });
             }
@@ -93,7 +120,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.a.key = input.keyToGlobal(event.keyCode);
                     controlKeys.a.name = event.key;
                     storage.add("controlA", controlKeys.a);
-                    let a = document.getElementById("a");
                     a.innerHTML = event.key;
                 });
             }
@@ -103,7 +129,6 @@ function controlState(elementId, storage, input, debug=false){
                     controlKeys.b.key = input.keyToGlobal(event.keyCode);
                     controlKeys.b.name = event.key;
                     storage.add("controlB", controlKeys.b);
-                    let b = document.getElementById("b");
                     b.innerHTML = event.key;
                 });
             }
