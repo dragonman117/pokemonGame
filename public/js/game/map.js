@@ -11,6 +11,8 @@ let Map = function(mapPath, draw, canvasTileSize){
     let ready = false;
     let onReadyFn = NaN;
 
+    let currentTileFn = NaN;
+
 
     //Helper Functions
     let fetchMap = function () {
@@ -45,10 +47,11 @@ let Map = function(mapPath, draw, canvasTileSize){
                         attr:{}
                     };
                     if(mapFile.tilesets[i].hasOwnProperty("tileproperties")){
-                        if(mapFile.tilesets[i].tileproperties.hasOwnProperty(tileCount)){
-                            keys = Object.keys(mapFile.tilesets[i].tileproperties[tileCount]);
+                        let tileOffset = mapFile.tilesets[i].firstgid;
+                        if(mapFile.tilesets[i].tileproperties.hasOwnProperty(tileCount-tileOffset)){
+                            keys = Object.keys(mapFile.tilesets[i].tileproperties[tileCount-tileOffset]);
                             for(let j = 0; j < keys.length; j++){
-                                tiles[tileCount].attr[keys[j]] = mapFile.tilesets[i].tileproperties[tileCount][keys[j]];
+                                tiles[tileCount].attr[keys[j]] = mapFile.tilesets[i].tileproperties[tileCount-tileOffset][keys[j]];
                             }
                         }
                     }
@@ -85,6 +88,7 @@ let Map = function(mapPath, draw, canvasTileSize){
             }
         }
 
+        //console.log(mapFile);
         //Load Layers onto map (bottom first for canvas draw)
         for(let x = 0; x < mapFile.layers.length; x++){
             let count = 0;
@@ -93,6 +97,7 @@ let Map = function(mapPath, draw, canvasTileSize){
                     if(mapFile.layers[x].data[count] !== 0){
                         masterMap[i][j].drawStack.push(mapFile.layers[x].data[count]);
                         let keys = Object.keys(tiles[mapFile.layers[x].data[count]].attr);
+                        //console.log(keys);
                         if(keys.length > 0){
                             for(let k = 0; k < keys.length; k++){
                                 if(keys[k] === "wall"){
@@ -126,10 +131,43 @@ let Map = function(mapPath, draw, canvasTileSize){
             }
         }
 
+        //For some reason it does not quite read in the properties in the first copy... check 2...
+        for(let i = 0; i < mapHeight; i++){
+            for(let j = 0; j < mapWidth; j++){
+                let atrKey = Object.keys(masterMap[i][j].attribute);
+                //console.log(atrKey);
+                for(let x = 0; x < atrKey.length; x++){
+                    if(atrKey[x] === "wall_bot"){
+                        masterMap[i][j].walls.bot = true;
+                        delete masterMap[i][j].attribute[atrKey[x]];
+                    }
+                    else if(atrKey[x] === "wall_right"){
+                        masterMap[i][j].walls.right = true;
+                        delete masterMap[i][j].attribute[atrKey[x]];
+                    }
+                    else if(atrKey[x] === "wall_top"){
+                        masterMap[i][j].walls.top = true;
+                        delete masterMap[i][j].attribute[atrKey[x]];
+                    }
+                    if(atrKey[x] === "wall_right"){
+                        masterMap[i][j].walls.right = true;
+                        delete masterMap[i][j].attribute[atrKey[x]];
+                    }
+                    if(atrKey[x] === "bridge"){
+                        masterMap[i][j].walls = {
+                            top: false,
+                            bot: false,
+                            left: false,
+                            right: false
+                        }
+                    }
+                }
+            }
+        }
+
         //Indicate ready to draw/work with
         ready = true;
         if(onReadyFn) onReadyFn();
-        console.log(masterMap);
     };
     let initMap = function () {
         fetchMap().then(data=>{
@@ -164,13 +202,22 @@ let Map = function(mapPath, draw, canvasTileSize){
         }
     };
     let getStart = function (){
-        return startPos;
+        return {x:startPos.x, y:startPos.y};
     };
     let onReady = function (fn) {
         onReadyFn = fn;
     };
     let getMapSize = function () {
         return {r:mapFile.height, c:mapFile.width}
+    };
+
+    let queryPos = function(pos){
+        if(pos.x >= 0 && pos.y >=0 && pos.x < masterMap[0].length && pos.y < masterMap.length){
+            let res = masterMap[pos.y][pos.x];
+            res.pos = {x:(pos.x), y:(pos.y)};
+            return res;
+        }
+        return null;
     };
 
     //Startup
@@ -180,6 +227,7 @@ let Map = function(mapPath, draw, canvasTileSize){
         draw:drawMap,
         getStart:getStart,
         onReady:onReady,
-        getMapSize:getMapSize
+        getMapSize:getMapSize,
+        queryPos:queryPos,
     }
 };

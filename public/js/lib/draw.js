@@ -163,23 +163,26 @@ let Graphics = function () {
     }
 
     /*
-    Takes spec object. Image Sprite spec: {index:{r:val, c:val}, position:{x:val, y:val}, tileSize:val, width:val, height:val, source:val}
+    Takes spec object. Image Sprite spec: {index:{r:val, c:val}, position:{x:val, y:val}, tileWidth:val, tileHeight:val, width:val, height:val, source:val}
      */
     function imgSprite(spec){
         let that = {},
             ready = false,
             image = new Image(),
             imgIndex = spec.index,
-            position = spec.position;
+            position = spec.position,
+            drawHeight = spec.tileHeight;
 
         image.onload = function () {
             ready = true;
         };
         image.src = spec.source;
 
-        that.update = function (location, index) {
+        that.update = function (location, index, height=spec.tileHeight, cheihgt = spec.height) {
             imgIndex = index;
             position = location;
+            drawHeight = height;
+            spec.height = cheihgt;
         };
 
         that.draw = function () {
@@ -188,10 +191,10 @@ let Graphics = function () {
 
                 context.drawImage(
                     image,
-                    imgIndex.c * spec.tileSize,
-                    imgIndex.r * spec.tileSize,
-                    spec.tileSize,
-                    spec.tileSize,
+                    imgIndex.c * spec.tileWidth,
+                    imgIndex.r * spec.tileHeight,
+                    spec.tileWidth,
+                    drawHeight,
                     position.x,
                     position.y,
                     spec.width,

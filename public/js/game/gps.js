@@ -18,11 +18,26 @@ let Gps = function (draw, tileSize, canvasGrid) {
         right: null,
         left: null
     };
+    let moveCompliment = {
+        up:"down",
+        down:"up",
+        right:"left",
+        left:"right"
+    };
+    let collisionComp = {
+        up:"bot",
+        down:"top",
+        right:"left",
+        left:"right"
+    };
+    let collision = false;
     let moveInProgress = false;
     let caryOn = false;
     let moveOffset = 0;
     let speedDivisor = 16;
     let onMoveEndFn = NaN;
+
+    let cCheckFn = NaN;
 
 
     let playerPos = {x:tileSize*(logicalPos.x-1), y:tileSize*(logicalPos.y-1)};
@@ -51,25 +66,27 @@ let Gps = function (draw, tileSize, canvasGrid) {
     let genMapPos = function(){
         offset = {x:0, y:0};
         range.x1 = logicalPosRelMap.x - (logicalPos.x-1);
-        range.x2 = logicalPosRelMap.x + (logicalPos.x)+1;
-        range.y1 = logicalPosRelMap.y - (logicalPos.y-1)-1;
+        range.x2 = logicalPosRelMap.x + (logicalPos.x);
+        range.y1 = logicalPosRelMap.y - (logicalPos.y-1);
         range.y2 = logicalPosRelMap.y + (logicalPos.y);
-        if(movement.up){
-            range.y1 -=1;
-            offset.y -= moveOffset;
-        }
-        if(movement.down){
-            range.y2 += 1;
-            offset.y -= tileSize - moveOffset;
-        }
-        if(movement.right){
-            range.x2 +=1;
-            offset.x -= tileSize - moveOffset;
-        }
-        if(movement.left){
-            range.x1 -=1;
-            offset.x -= moveOffset;
+        if(!collision){
+            if(movement.up){
+                range.y1 -=1;
+                offset.y -= moveOffset;
+            }
+            if(movement.down){
+                range.y2 += 1;
+                offset.y -= tileSize - moveOffset;
+            }
+            if(movement.right){
+                range.x2 +=1;
+                offset.x -= tileSize - moveOffset;
+            }
+            if(movement.left){
+                range.x1 -=1;
+                offset.x -= moveOffset;
 
+            }
         }
 
         if(range.x1 < 0){
@@ -93,20 +110,35 @@ let Gps = function (draw, tileSize, canvasGrid) {
 
     let gpsUpdate = function (time) {
         let now = time;
+        collision = false;
         if(moveInProgress){
+            let nearby = cCheckFn(logicalPosRelMap);
             let current = null;
-            if(movement.up) current = "up";
-            if(movement.down) current = "down";
+            let collisionCurrent = null;
+            if(movement.up) {
+                current = "up";
+                collisionCurrent="top";
+            }
+            if(movement.down){
+                current = "down";
+                collisionCurrent = "bot";
+            }
             if(movement.left) current = "left";
             if(movement.right) current = "right";
+            if(collisionCurrent === null) collisionCurrent = current;
+            if(nearby.me.walls[collisionCurrent]) collision = true;
+            if(nearby[current] && nearby[current].walls[collisionComp[current]]) collision = true;
             let timeDiff = now - movement[current];
             if(timeDiff < 250){
-                moveOffset = tileSize - Math.floor(timeDiff/speedDivisor);
+                if(!collision)moveOffset = tileSize - Math.floor(timeDiff/speedDivisor);
+                else moveOffset = 0;
             }else{
-                if(movement.up)logicalPosRelMap.y -= 1;
-                if(movement.down)logicalPosRelMap.y += 1;
-                if(movement.left)logicalPosRelMap.x -= 1;
-                if(movement.right)logicalPosRelMap.x += 1;
+                if(!collision){
+                    if(movement.up)logicalPosRelMap.y -= 1;
+                    if(movement.down)logicalPosRelMap.y += 1;
+                    if(movement.left)logicalPosRelMap.x -= 1;
+                    if(movement.right)logicalPosRelMap.x += 1;
+                }
                 if(caryOn){
                     moveOffset = speedDivisor;
                     movement[current] = time;
@@ -116,7 +148,9 @@ let Gps = function (draw, tileSize, canvasGrid) {
                     moveInProgress = false;
                     if(onMoveEndFn){
                         onMoveEndFn();
+                        //console.log("final Neighbors: ", cCheckFn(logicalPosRelMap));
                         onMoveEndFn = NaN; //remove the fn after calling...
+                        collision = false;
                     }
                 }
             }
@@ -152,6 +186,14 @@ let Gps = function (draw, tileSize, canvasGrid) {
         }
     };
 
+    let setCollisionCheckFunction= function(fn){
+        cCheckFn = fn;
+    };
+
+    let getCurrentMapPos = function () {
+        return logicalPosRelMap;
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -161,6 +203,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
         gpsUpdate:gpsUpdate,
         move:move,
         stopMove:stopMove,
-        onMoveEnd:onMoveEnd
+        onMoveEnd:onMoveEnd,
+        setCollisionCheckFunction:setCollisionCheckFunction,
+        getCurrentMapPos:getCurrentMapPos
     }
 };

@@ -5,7 +5,7 @@
 function gameState(elementId, draw, storage, debug=false){
     let canvasTileSize = 16;
     let game = state(elementId, "Game");
-    let map = new Map("/js/maps/bigMap.json", draw, canvasTileSize);
+    let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
     let gps = new Gps(draw, canvasTileSize, 13);
     let player = new Player(draw, canvasTileSize);
     let storageMap = {
@@ -31,6 +31,20 @@ function gameState(elementId, draw, storage, debug=false){
         gps.setMapSize(map.getMapSize());
         gps.setPlayerInitialPos(map.getStart());
         player.setStartPos(gps.getPlayerPos());
+
+        gps.setCollisionCheckFunction(function (pos) {
+            let res = {
+                me: map.queryPos(pos),
+                up: map.queryPos({x:pos.x, y:(pos.y-1)}),
+                down: map.queryPos({x:pos.x, y:(pos.y+1)}),
+                right: map.queryPos({x:(pos.x+1), y:pos.y}),
+                left: map.queryPos({x:(pos.x-1), y:pos.y})
+            };
+            return res;
+        });
+        player.setCurrentTileFn(function () {
+            return map.queryPos(gps.getCurrentMapPos());
+        })
     });
 
     let gameUpdate = function (time, inputs) {

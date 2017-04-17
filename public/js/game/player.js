@@ -14,7 +14,8 @@ let Player = function (draw, canvasTileSize) {
             x: 0,
             y: 0,
         },
-        tileSize: 16,
+        tileHeight: 16,
+        tileWidth: 16,
         width:canvasTileSize,
         height: canvasTileSize,
         source: "/img/playerSheet.png"
@@ -76,6 +77,8 @@ let Player = function (draw, canvasTileSize) {
     let currentRest = movementAnimations.down.stationary;
     let currentDraw = currentRest;
 
+    let currentTileFn = NaN;
+
     let playerDraw = function () {
         if(ready){
             playerImg.draw();
@@ -90,6 +93,10 @@ let Player = function (draw, canvasTileSize) {
     };
 
     let playerUpdate = function (time) {
+        let tile = null;
+        let height = 16;
+        if(currentTileFn) tile = currentTileFn();
+        if(tile && tile.attribute.hasOwnProperty("grass")) height = 13;
         if(moveInProgress){
             //Animate
             //let now = performance.now();
@@ -104,7 +111,7 @@ let Player = function (draw, canvasTileSize) {
         }else{
             currentDraw = currentRest;
         }
-        playerImg.update(pos,currentDraw);
+        playerImg.update(pos,currentDraw, height, height);
     };
 
     let move = function (time, dir) {
@@ -122,11 +129,16 @@ let Player = function (draw, canvasTileSize) {
         }
     };
 
+    let setCurrentTileFn = function(fn){
+        currentTileFn = fn;
+    };
+
     return {
         draw:playerDraw,
         setStartPos:setStartPos,
         move:move,
         stopMove:stopMove,
-        playerUpdate:playerUpdate
+        playerUpdate:playerUpdate,
+        setCurrentTileFn:setCurrentTileFn
     }
 };
