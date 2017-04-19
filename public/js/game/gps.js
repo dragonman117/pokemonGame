@@ -39,6 +39,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
 
     let cCheckFn = NaN;
 
+    let battleProb = 0;
+
 
     let playerPos = {x:tileSize*(logicalPos.x-1), y:tileSize*(logicalPos.y-1)};
     for(let i = 0; i < canvasSize.xSize; i += tileSize){
@@ -151,6 +153,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
                         //console.log("final Neighbors: ", cCheckFn(logicalPosRelMap));
                         onMoveEndFn = NaN; //remove the fn after calling...
                         collision = false;
+                        battleProb = Math.random()*100;
                     }
                 }
             }
@@ -194,6 +197,10 @@ let Gps = function (draw, tileSize, canvasGrid) {
         return logicalPosRelMap;
     };
 
+    let getBattleProb = function(){
+        return battleProb;
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -205,6 +212,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
         stopMove:stopMove,
         onMoveEnd:onMoveEnd,
         setCollisionCheckFunction:setCollisionCheckFunction,
-        getCurrentMapPos:getCurrentMapPos
+        getCurrentMapPos:getCurrentMapPos,
+        getBattleProb:getBattleProb
     }
 };

@@ -7,6 +7,7 @@ function gameState(elementId, draw, storage, debug=false){
     let game = state(elementId, "Game");
     let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
     let gps = new Gps(draw, canvasTileSize, 13);
+    let battle = new Battle(draw);
     let player = new Player(draw, canvasTileSize);
     let storageMap = {
         up: "controlUp",
@@ -18,14 +19,17 @@ function gameState(elementId, draw, storage, debug=false){
         b: "controlB"
     };
     let controlKeys = {
-        up: {key: KeyEvent.DOM_VK_UP, name: "up arrow"},
-        down: {key: KeyEvent.DOM_VK_DOWN, name: "down arrow"},
-        left: {key: KeyEvent.DOM_VK_LEFT, name: "left arrow"},
-        right: {key: KeyEvent.DOM_VK_RIGHT, name: "right arrow"},
-        start: {key: KeyEvent.DOM_VK_ENTER, name: "enter"},
-        a: {key: KeyEvent.DOM_VK_A, name: "A"},
-        b: {key: KeyEvent.DOM_VK_B, name: "B"}
+        up: {key: "DOM_VK_UP", name: "up arrow"},
+        down: {key: "DOM_VK_DOWN", name: "down arrow"},
+        left: {key: "DOM_VK_LEFT", name: "left arrow"},
+        right: {key: "DOM_VK_RIGHT", name: "right arrow"},
+        start: {key: "DOM_VK_ENTER", name: "enter"},
+        a: {key: "DOM_VK_A", name: "A"},
+        b: {key: "DOM_VK_B", name: "B"}
     };
+    let battleInProg = false;
+    let battleCheck = false;
+    let battleProb = 0;
 
     map.onReady(function () {
         gps.setMapSize(map.getMapSize());
@@ -44,7 +48,16 @@ function gameState(elementId, draw, storage, debug=false){
         });
         player.setCurrentTileFn(function () {
             return map.queryPos(gps.getCurrentMapPos());
-        })
+        });
+
+        battleCheck = function () {
+            let pos = map.queryPos(gps.getCurrentMapPos());
+            if(pos.attribute.hasOwnProperty("grass")){
+                if(battleProb > 80){
+                    battleInProg = true;
+                }
+            }
+        };
     });
 
     let gameUpdate = function (time, inputs) {
@@ -56,53 +69,66 @@ function gameState(elementId, draw, storage, debug=false){
                 }
                 game.changeState("mainMenu");
             }
-            if(inputs[KeyEvent[controlKeys.up.key]]){
-                gps.move(now, "up");
-                player.move(now, "up");
-                gps.onMoveEnd(function () {
-                    player.stopMove("up");
-                })
+
+            if(!battleInProg){
+                if(inputs[KeyEvent[controlKeys.up.key]]){
+                    gps.move(now, "up");
+                    player.move(now, "up");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("up");
+                    })
+                }else{
+                    gps.stopMove("up");
+                }
+                if(inputs[KeyEvent[controlKeys.down.key]]){
+                    gps.move(now, "down");
+                    player.move(now, "down");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("down");
+                    })
+                }else{
+                    gps.stopMove("down");
+                }
+                if(inputs[KeyEvent[controlKeys.right.key]]){
+                    gps.move(now, "right");
+                    player.move(now, "right");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("right");
+                    })
+                }else{
+                    gps.stopMove("right");
+                }
+                if(inputs[KeyEvent[controlKeys.left.key]]){
+                    gps.move(now, "left");
+                    player.move(now, "left");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("left");
+                    })
+                }else{
+                    gps.stopMove("left");
+                }
+                gps.gpsUpdate(now);
+                player.playerUpdate(now);
+                battleProb = gps.getBattleProb();
+                //Check for grass
+                if(battleCheck) battleCheck();
             }else{
-                gps.stopMove("up");
-            }
-            if(inputs[KeyEvent[controlKeys.down.key]]){
-                gps.move(now, "down");
-                player.move(now, "down");
-                gps.onMoveEnd(function () {
-                    player.stopMove("down");
-                })
-            }else{
-                gps.stopMove("down");
-            }
-            if(inputs[KeyEvent[controlKeys.right.key]]){
-                gps.move(now, "right");
-                player.move(now, "right");
-                gps.onMoveEnd(function () {
-                    player.stopMove("right");
-                })
-            }else{
-                gps.stopMove("right");
-            }
-            if(inputs[KeyEvent[controlKeys.left.key]]){
-                gps.move(now, "left");
-                player.move(now, "left");
-                gps.onMoveEnd(function () {
-                    player.stopMove("left");
-                })
-            }else{
-                gps.stopMove("left");
+                battle.update(now);
             }
 
-            gps.gpsUpdate(now);
-            player.playerUpdate(now);
+
             resolve();
         })
     };
 
     let gameRender = function () {
-        draw.beginRender();
-        map.draw(gps.getMapRange(), gps.getOffset());
-        player.draw();
+        if(!battleInProg){
+            draw.beginRender();
+            map.draw(gps.getMapRange(), gps.getOffset());
+            player.draw();
+        }else{
+            battle.draw();
+        }
     };
 
     game.init(gameRender, gameUpdate);
@@ -111,6 +137,7 @@ function gameState(elementId, draw, storage, debug=false){
         let sKeys = Object.keys(storageMap);
         for(let i = 0; i < sKeys.length; i++){
             if(storage.contains(storageMap[sKeys[i]])){
+                console.log("i ran");
                 controlKeys[sKeys[i]] = storage.fetch(storageMap[sKeys[i]]);
             }
         }
