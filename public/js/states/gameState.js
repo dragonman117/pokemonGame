@@ -3,6 +3,9 @@
  */
 
 function gameState(elementId, draw, storage, debug=false){
+    let exploreAudio = new Audio('explore.mp3');
+    let battleAudio = new Audio('battle.mp3');
+    let startAudio = true;
     let canvasTileSize = 16;
     let game = state(elementId, "Game");
     let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
@@ -18,13 +21,13 @@ function gameState(elementId, draw, storage, debug=false){
         b: "controlB"
     };
     let controlKeys = {
-        up: {key: KeyEvent.DOM_VK_UP, name: "up arrow"},
-        down: {key: KeyEvent.DOM_VK_DOWN, name: "down arrow"},
-        left: {key: KeyEvent.DOM_VK_LEFT, name: "left arrow"},
-        right: {key: KeyEvent.DOM_VK_RIGHT, name: "right arrow"},
-        start: {key: KeyEvent.DOM_VK_ENTER, name: "enter"},
-        a: {key: KeyEvent.DOM_VK_A, name: "A"},
-        b: {key: KeyEvent.DOM_VK_B, name: "B"}
+        up: {key: "DOM_VK_UP", name: "up arrow"},
+        down: {key: "DOM_VK_DOWN", name: "down arrow"},
+        left: {key: "DOM_VK_LEFT", name: "left arrow"},
+        right: {key: "DOM_VK_RIGHT", name: "right arrow"},
+        start: {key: "DOM_VK_ENTER", name: "enter"},
+        a: {key: "DOM_VK_A", name: "A"},
+        b: {key: "DOM_VK_B", name: "B"}
     };
 
     map.onReady(function () {
@@ -44,88 +47,96 @@ function gameState(elementId, draw, storage, debug=false){
         });
         player.setCurrentTileFn(function () {
             return map.queryPos(gps.getCurrentMapPos());
-        })
+        });
     });
 
     let gameUpdate = function (time, inputs) {
         let now = performance.now();
+        if (startAudio){
+            exploreAudio.play();
+        }
+        exploreAudio.addEventListener("ended", function(){
+            exploreAudio.currentTime = 0;
+            exploreAudio.play();
+        });
         return new Promise(function (resolve, reject) {
             if(inputs[KeyEvent.DOM_VK_ESCAPE]){
-                console.log('escape');
                 if(debug){
                     console.log("Escape Key selected");
                 }
+                exploreAudio.currentTime = 0;
+                exploreAudio.pause();
                 game.changeState("mainMenu");
             }
-            if(inputs[controlKeys.up.key]){
-                console.log('up');
-                gps.move(now, "up");
-                player.move(now, "up");
-                gps.onMoveEnd(function () {
-                    player.stopMove("up");
-                })
-            }else{
-                gps.stopMove("up");
-            }
-            if(inputs[controlKeys.down.key]){
-                gps.move(now, "down");
-                player.move(now, "down");
-                gps.onMoveEnd(function () {
-                    player.stopMove("down");
-                })
-            }else{
-                gps.stopMove("down");
-            }
-            if(inputs[controlKeys.right.key]){
-                gps.move(now, "right");
-                player.move(now, "right");
-                gps.onMoveEnd(function () {
-                    player.stopMove("right");
-                })
-            }else{
-                gps.stopMove("right");
-            }
-            if(inputs[controlKeys.left.key]){
-                gps.move(now, "left");
-                player.move(now, "left");
-                gps.onMoveEnd(function () {
-                    player.stopMove("left");
-                })
-            }else{
-                gps.stopMove("left");
-            }
 
-            gps.gpsUpdate(now);
-            player.playerUpdate(now);
+                if(inputs[KeyEvent[controlKeys.up.key]]){
+                    gps.move(now, "up");
+                    player.move(now, "up");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("up");
+                    })
+                }else{
+                    gps.stopMove("up");
+                }
+                if(inputs[KeyEvent[controlKeys.down.key]]){
+                    gps.move(now, "down");
+                    player.move(now, "down");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("down");
+                    })
+                }else{
+                    gps.stopMove("down");
+                }
+                if(inputs[KeyEvent[controlKeys.right.key]]){
+                    gps.move(now, "right");
+                    player.move(now, "right");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("right");
+                    })
+                }else{
+                    gps.stopMove("right");
+                }
+                if(inputs[KeyEvent[controlKeys.left.key]]){
+                    gps.move(now, "left");
+                    player.move(now, "left");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("left");
+                    })
+                }else{
+                    gps.stopMove("left");
+                }
+                gps.gpsUpdate(now);
+                player.playerUpdate(now);
             resolve();
         })
     };
 
     let gameRender = function () {
-        draw.beginRender();
-        map.draw(gps.getMapRange(), gps.getOffset());
-        player.draw();
+
+            draw.beginRender();
+            map.draw(gps.getMapRange(), gps.getOffset());
+            player.draw();
+
     };
 
     game.init(gameRender, gameUpdate);
 
     game.onActivate(function () {
-        console.log('onActivate');
         let sKeys = Object.keys(storageMap);
         for(let i = 0; i < sKeys.length; i++){
             if(storage.contains(storageMap[sKeys[i]])){
-                console.log('storage');
+                console.log("i ran");
                 controlKeys[sKeys[i]] = storage.fetch(storageMap[sKeys[i]]);
             }
         }
         game.addInput(KeyEvent.DOM_VK_ESCAPE);
-        game.addInput(controlKeys.up.key);
-        game.addInput(controlKeys.down.key);
-        game.addInput(controlKeys.left.key);
-        game.addInput(controlKeys.right.key);
-        game.addInput(controlKeys.start.key);
-        game.addInput(controlKeys.a.key);
-        game.addInput(controlKeys.b.key);
+        game.addInput(KeyEvent[controlKeys.up.key]);
+        game.addInput(KeyEvent[controlKeys.down.key]);
+        game.addInput(KeyEvent[controlKeys.left.key]);
+        game.addInput(KeyEvent[controlKeys.right.key]);
+        game.addInput(KeyEvent[controlKeys.start.key]);
+        game.addInput(KeyEvent[controlKeys.a.key]);
+        game.addInput(KeyEvent[controlKeys.b.key]);
     });
 
     return game;
