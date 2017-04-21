@@ -3,21 +3,13 @@
  */
 
 function gameState(elementId, draw, storage, debug=false){
-    let canvasTileSize = 16;
-    let game = state(elementId, "Game");
-    let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
-    let gps = new Gps(draw, canvasTileSize, 13);
-    let battle = new Battle(draw);
-    let player = new Player(draw, canvasTileSize);
-    let storageMap = {
-        up: "controlUp",
-        down: "controlDown",
-        left: "controlLeft",
-        right: "controlRight",
-        start: "controlStart",
-        a: "controlA",
-        b: "controlB"
-    };
+    //pokemon :)
+    let pokemonList = [
+        "/js/pokemon/pikachuDefault.json",
+        "/js/pokemon/pikachuDefault.json",
+        "/js/pokemon/pikachuDefault.json",
+        "/js/pokemon/pikachuDefault.json"
+    ];
     let controlKeys = {
         up: {key: "DOM_VK_UP", name: "up arrow"},
         down: {key: "DOM_VK_DOWN", name: "down arrow"},
@@ -30,6 +22,25 @@ function gameState(elementId, draw, storage, debug=false){
     let battleInProg = false;
     let battleCheck = false;
     let battleProb = 0;
+    let canvasTileSize = 16;
+
+    let game = state(elementId, "Game");
+    let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
+    let gps = new Gps(draw, canvasTileSize, 13);
+    let battle = new Battle(draw, pokemonList,controlKeys);
+    let player = new Player(draw, canvasTileSize);
+    let storageMap = {
+        up: "controlUp",
+        down: "controlDown",
+        left: "controlLeft",
+        right: "controlRight",
+        start: "controlStart",
+        a: "controlA",
+        b: "controlB"
+    };
+
+
+
 
     map.onReady(function () {
         gps.setMapSize(map.getMapSize());
@@ -53,8 +64,13 @@ function gameState(elementId, draw, storage, debug=false){
         battleCheck = function () {
             let pos = map.queryPos(gps.getCurrentMapPos());
             if(pos.attribute.hasOwnProperty("grass")){
-                if(battleProb > 80){
+                if(battleProb > 0){
                     battleInProg = true;
+                    battle.setFinishFn(function () {
+                        gps.clearProb();
+                        battleInProg = false;
+                    });
+                    battle.setPlayerPokemon(player.getPokemonList());
                 }
             }
         };
@@ -113,7 +129,7 @@ function gameState(elementId, draw, storage, debug=false){
                 //Check for grass
                 if(battleCheck) battleCheck();
             }else{
-                battle.update(now);
+                battle.update(now, inputs);
             }
 
 
@@ -137,7 +153,6 @@ function gameState(elementId, draw, storage, debug=false){
         let sKeys = Object.keys(storageMap);
         for(let i = 0; i < sKeys.length; i++){
             if(storage.contains(storageMap[sKeys[i]])){
-                console.log("i ran");
                 controlKeys[sKeys[i]] = storage.fetch(storageMap[sKeys[i]]);
             }
         }

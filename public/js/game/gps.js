@@ -201,6 +201,10 @@ let Gps = function (draw, tileSize, canvasGrid) {
         return battleProb;
     };
 
+    let clearProb = function () {
+        battleProb = 0;
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -213,6 +217,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
         onMoveEnd:onMoveEnd,
         setCollisionCheckFunction:setCollisionCheckFunction,
         getCurrentMapPos:getCurrentMapPos,
-        getBattleProb:getBattleProb
+        getBattleProb:getBattleProb,
+        clearProb:clearProb
     }
 };
