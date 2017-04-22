@@ -22,6 +22,9 @@ function gameState(elementId, draw, storage, debug=false){
     let battleInProg = false;
     let battleCheck = false;
     let battleProb = 0;
+    let exploreAudio = new Audio('explore.mp3');
+    let battleAudio = new Audio('battle.mp3');
+    let startAudio = true;
     let canvasTileSize = 16;
 
     let game = state(elementId, "Game");
@@ -38,9 +41,15 @@ function gameState(elementId, draw, storage, debug=false){
         a: "controlA",
         b: "controlB"
     };
-
-
-
+    let controlKeys = {
+        up: {key: "DOM_VK_UP", name: "up arrow"},
+        down: {key: "DOM_VK_DOWN", name: "down arrow"},
+        left: {key: "DOM_VK_LEFT", name: "left arrow"},
+        right: {key: "DOM_VK_RIGHT", name: "right arrow"},
+        start: {key: "DOM_VK_ENTER", name: "enter"},
+        a: {key: "DOM_VK_A", name: "A"},
+        b: {key: "DOM_VK_B", name: "B"}
+    };
 
     map.onReady(function () {
         gps.setMapSize(map.getMapSize());
@@ -74,15 +83,25 @@ function gameState(elementId, draw, storage, debug=false){
                 }
             }
         };
+        });
     });
 
     let gameUpdate = function (time, inputs) {
         let now = performance.now();
+        if (startAudio){
+            exploreAudio.play();
+        }
+        exploreAudio.addEventListener("ended", function(){
+            exploreAudio.currentTime = 0;
+            exploreAudio.play();
+        });
         return new Promise(function (resolve, reject) {
             if(inputs[KeyEvent.DOM_VK_ESCAPE]){
                 if(debug){
                     console.log("Escape Key selected");
                 }
+                exploreAudio.currentTime = 0;
+                exploreAudio.pause();
                 game.changeState("mainMenu");
             }
 
@@ -133,6 +152,45 @@ function gameState(elementId, draw, storage, debug=false){
             }
 
 
+
+                if(inputs[KeyEvent[controlKeys.up.key]]){
+                    gps.move(now, "up");
+                    player.move(now, "up");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("up");
+                    })
+                }else{
+                    gps.stopMove("up");
+                }
+                if(inputs[KeyEvent[controlKeys.down.key]]){
+                    gps.move(now, "down");
+                    player.move(now, "down");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("down");
+                    })
+                }else{
+                    gps.stopMove("down");
+                }
+                if(inputs[KeyEvent[controlKeys.right.key]]){
+                    gps.move(now, "right");
+                    player.move(now, "right");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("right");
+                    })
+                }else{
+                    gps.stopMove("right");
+                }
+                if(inputs[KeyEvent[controlKeys.left.key]]){
+                    gps.move(now, "left");
+                    player.move(now, "left");
+                    gps.onMoveEnd(function () {
+                        player.stopMove("left");
+                    })
+                }else{
+                    gps.stopMove("left");
+                }
+                gps.gpsUpdate(now);
+                player.playerUpdate(now);
             resolve();
         })
     };
@@ -145,10 +203,15 @@ function gameState(elementId, draw, storage, debug=false){
         }else{
             battle.draw();
         }
+
+            draw.beginRender();
+            map.draw(gps.getMapRange(), gps.getOffset());
+            player.draw();
+
     };
 
     game.init(gameRender, gameUpdate);
-    
+
     game.onActivate(function () {
         let sKeys = Object.keys(storageMap);
         for(let i = 0; i < sKeys.length; i++){

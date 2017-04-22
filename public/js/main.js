@@ -22,7 +22,7 @@ for(let i = 0; i < states.length; i++){
 }
 
 let highScoreId = {"first":"hs1", "second":"hs2", "third": "hs3", "fourth":"hs4", "fifth":"hs5"};
-let controlsId = {"controlUp": "up", "controlDown": "down", "controlLeft": "left", "controlRight": "right", "controlStart": "start", "controlA": "a", "controlB": "b"};
+// let controlsId = {"controlUp": "up", "controlDown": "down", "controlLeft": "left", "controlRight": "right", "controlStart": "start", "controlA": "a", "controlB": "b"};
 
 //Initialize Draw Library
 Pokemon.draw = Graphics();
