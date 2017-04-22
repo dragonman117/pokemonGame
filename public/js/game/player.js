@@ -23,6 +23,9 @@ let Player = function (draw, canvasTileSize) {
     let playerImg = draw.ImgSprite(spec);
     let ready = false;
     let speedDivisor = 125;
+    let pokemonList = [
+        new PokemonElm("/js/pokemon/pikachuDefault.json",draw,3)
+    ];
 
     let movementAnimations = {
         'down':{
@@ -133,12 +136,17 @@ let Player = function (draw, canvasTileSize) {
         currentTileFn = fn;
     };
 
+    let getPokemonList = function () {
+        return pokemonList;
+    };
+
     return {
         draw:playerDraw,
         setStartPos:setStartPos,
         move:move,
         stopMove:stopMove,
         playerUpdate:playerUpdate,
-        setCurrentTileFn:setCurrentTileFn
+        setCurrentTileFn:setCurrentTileFn,
+        getPokemonList:getPokemonList
     }
 };

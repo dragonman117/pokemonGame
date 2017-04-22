@@ -1,0 +1,18 @@
+{
+  "name":"Sparrow",
+  "hp":40,
+  "level":3,
+  "pointsToNextLevel":50,
+  "stats":{
+    "attack":60,
+    "defense":30,
+    "speed": 70
+  },
+  "attacks":{
+    "one":"/js/attacks/wing.json",
+    "two":"/js/attacks/tackle.json",
+    "three":"/js/attacks/fury.json",
+    "four":"/js/attacks/fury.json"
+  },
+  "img":"/img/pokemon/sparrow.png"
+}

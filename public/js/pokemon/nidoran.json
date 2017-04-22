@@ -1,0 +1,18 @@
+{
+  "name":"Nidoran",
+  "hp":55,
+  "level":3,
+  "pointsToNextLevel":50,
+  "stats":{
+    "attack":47,
+    "defense":52,
+    "speed": 41
+  },
+  "attacks":{
+    "one":"/js/attacks/tackle.json",
+    "two":"/js/attacks/scratch.json",
+    "three":"/js/attacks/growl.json",
+    "four":"/js/attacks/growl.json"
+  },
+  "img":"/img/pokemon/nidoran.png"
+}

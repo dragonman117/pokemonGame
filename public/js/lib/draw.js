@@ -171,18 +171,22 @@ let Graphics = function () {
             image = new Image(),
             imgIndex = spec.index,
             position = spec.position,
-            drawHeight = spec.tileHeight;
+            drawHeight = spec.tileHeight,
+            drawWidth = spec.tileWidth;
 
         image.onload = function () {
             ready = true;
         };
         image.src = spec.source;
 
-        that.update = function (location, index, height=spec.tileHeight, cheihgt = spec.height) {
+        that.update = function (location, index, height=spec.tileHeight, cheihgt = spec.height, width = spec.tileWidth, cwidth = spec.width) {
             imgIndex = index;
             position = location;
             drawHeight = height;
+            drawWidth = width;
             spec.height = cheihgt;
+            spec.width = cwidth;
+
         };
 
         that.draw = function () {
@@ -193,7 +197,7 @@ let Graphics = function () {
                     image,
                     imgIndex.c * spec.tileWidth,
                     imgIndex.r * spec.tileHeight,
-                    spec.tileWidth,
+                    drawWidth,
                     drawHeight,
                     position.x,
                     position.y,
@@ -257,7 +261,6 @@ let Graphics = function () {
 
         function measureTextHeight(spec){
             context.save();
-
             context.font = spec.font;
             context.fillStyle = spec.fill;
             context.strokeStyle = spec.stroke;
@@ -283,20 +286,25 @@ let Graphics = function () {
 
         that.draw = function () {
             context.save();
-
             context.font = spec.font;
             context.fillStyle = spec.fill;
             context.strokeStyle = spec.stroke;
             context.textBaseline = 'top';
 
-            context.translate(spec.pos.x + that.width / 2, spec.pos.y + that.height / 2);
-            context.rotate(spec.rotation);
-            context.translate(-(spec.pos.x + that.width / 2), -(spec.pos.y + that.height / 2));
+            // context.translate(spec.pos.x + that.width / 2, spec.pos.y + that.height / 2);
+            // context.rotate(spec.rotation);
+            // context.translate(-(spec.pos.x + that.width / 2), -(spec.pos.y + that.height / 2));
 
             context.fillText(spec.text, spec.pos.x, spec.pos.y);
-            context.strokeText(spec.text, spec.pos.x, spec.pos.y);
+            //context.strokeText(spec.text, spec.pos.x, spec.pos.y);
 
             context.restore();
+        };
+
+        that.update = function (text) {
+            spec.text = text;
+            that.width = measureTextWidth(text);
+            that.height = measureTextHeight(text);
         };
 
         that.height = measureTextHeight(spec);
