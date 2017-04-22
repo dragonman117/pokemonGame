@@ -41,15 +41,6 @@ function gameState(elementId, draw, storage, debug=false){
         a: "controlA",
         b: "controlB"
     };
-    let controlKeys = {
-        up: {key: "DOM_VK_UP", name: "up arrow"},
-        down: {key: "DOM_VK_DOWN", name: "down arrow"},
-        left: {key: "DOM_VK_LEFT", name: "left arrow"},
-        right: {key: "DOM_VK_RIGHT", name: "right arrow"},
-        start: {key: "DOM_VK_ENTER", name: "enter"},
-        a: {key: "DOM_VK_A", name: "A"},
-        b: {key: "DOM_VK_B", name: "B"}
-    };
 
     map.onReady(function () {
         gps.setMapSize(map.getMapSize());
@@ -75,6 +66,7 @@ function gameState(elementId, draw, storage, debug=false){
             if(pos.attribute.hasOwnProperty("grass")){
                 if(battleProb > 73){
                     battleInProg = true;
+                    console.log("i started");
                     battle.setFinishFn(function () {
                         gps.clearProb();
                         battleInProg = false;
@@ -83,7 +75,6 @@ function gameState(elementId, draw, storage, debug=false){
                 }
             }
         };
-        });
     });
 
     let gameUpdate = function (time, inputs) {
@@ -150,47 +141,6 @@ function gameState(elementId, draw, storage, debug=false){
             }else{
                 battle.update(now, inputs);
             }
-
-
-
-                if(inputs[KeyEvent[controlKeys.up.key]]){
-                    gps.move(now, "up");
-                    player.move(now, "up");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("up");
-                    })
-                }else{
-                    gps.stopMove("up");
-                }
-                if(inputs[KeyEvent[controlKeys.down.key]]){
-                    gps.move(now, "down");
-                    player.move(now, "down");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("down");
-                    })
-                }else{
-                    gps.stopMove("down");
-                }
-                if(inputs[KeyEvent[controlKeys.right.key]]){
-                    gps.move(now, "right");
-                    player.move(now, "right");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("right");
-                    })
-                }else{
-                    gps.stopMove("right");
-                }
-                if(inputs[KeyEvent[controlKeys.left.key]]){
-                    gps.move(now, "left");
-                    player.move(now, "left");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("left");
-                    })
-                }else{
-                    gps.stopMove("left");
-                }
-                gps.gpsUpdate(now);
-                player.playerUpdate(now);
             resolve();
         })
     };
@@ -203,10 +153,6 @@ function gameState(elementId, draw, storage, debug=false){
         }else{
             battle.draw();
         }
-
-            draw.beginRender();
-            map.draw(gps.getMapRange(), gps.getOffset());
-            player.draw();
 
     };
 
