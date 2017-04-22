@@ -8,10 +8,10 @@ function gameState(elementId, draw, storage, debug=false){
     let startAudio = true;
     //pokemon :)
     let pokemonList = [
-        "/js/pokemon/pikachuDefault.json",
-        "/js/pokemon/pikachuDefault.json",
-        "/js/pokemon/pikachuDefault.json",
-        "/js/pokemon/pikachuDefault.json"
+        "/js/pokemon/rattata.json",
+        "/js/pokemon/pidgey.json",
+        "/js/pokemon/sparrow.json",
+        "/js/pokemon/nidoran.json"
     ];
     let controlKeys = {
         up: {key: "DOM_VK_UP", name: "up arrow"},
@@ -25,6 +25,7 @@ function gameState(elementId, draw, storage, debug=false){
     let battleInProg = false;
     let battleCheck = false;
     let battleProb = 0;
+
     let canvasTileSize = 16;
 
     let game = state(elementId, "Game");
@@ -64,11 +65,12 @@ function gameState(elementId, draw, storage, debug=false){
         battleCheck = function () {
             let pos = map.queryPos(gps.getCurrentMapPos());
             if(pos.attribute.hasOwnProperty("grass")){
-                if(battleProb > 77){
+                if(battleProb > 73){
                     exploreAudio.currentTime = 0;
                     exploreAudio.pause();
                     battleAudio.play();
                     battleInProg = true;
+                    console.log("i started");
                     battle.setFinishFn(function () {
                         gps.clearProb();
                         battleInProg = false;
@@ -104,6 +106,7 @@ function gameState(elementId, draw, storage, debug=false){
                 battleAudio.pause();
                 game.changeState("mainMenu");
             }
+
             if(!battleInProg){
                 if(inputs[KeyEvent[controlKeys.up.key]]){
                     gps.move(now, "up");
@@ -169,7 +172,6 @@ function gameState(elementId, draw, storage, debug=false){
         let sKeys = Object.keys(storageMap);
         for(let i = 0; i < sKeys.length; i++){
             if(storage.contains(storageMap[sKeys[i]])){
-                console.log("i ran");
                 controlKeys[sKeys[i]] = storage.fetch(storageMap[sKeys[i]]);
             }
         }

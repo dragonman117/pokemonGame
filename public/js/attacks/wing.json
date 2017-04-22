@@ -1,0 +1,7 @@
+{
+  "name":"Wing Attack",
+  "PP":20,
+  "power": 60,
+  "type": "Norm",
+  "img": "/img/wing.png"
+}

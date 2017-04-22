@@ -32,7 +32,7 @@ function ParticleSystem(spec, graphics) {
             center: {x: spec.center.x, y: spec.center.y},
             direction: Random.nextCircleVector(),
             speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev),
-            rotation: 0,
+            rotation: Random.nextGaussian(spec.speed.mean, spec.speed.stdev),
             lifetime: Random.nextGaussian(spec.lifetime.mean, spec.lifetime.stdev),
             alive: 0
         };
