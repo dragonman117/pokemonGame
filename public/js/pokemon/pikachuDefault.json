@@ -1,0 +1,12 @@
+{
+  "name":"Pikachu",
+  "hp":35,
+  "level":3,
+  "pointsToNextLevel":50,
+  "stats":{
+    "attack":55,
+    "defense":30,
+    "speed": 90
+  },
+  "img":"/img/pokemon/pikachu.png"
+}

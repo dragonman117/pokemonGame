@@ -6,10 +6,31 @@ function gameState(elementId, draw, storage, debug=false){
     let exploreAudio = new Audio('explore.mp3');
     let battleAudio = new Audio('battle.mp3');
     let startAudio = true;
+    //pokemon :)
+    let pokemonList = [
+        "/js/pokemon/pikachuDefault.json",
+        "/js/pokemon/pikachuDefault.json",
+        "/js/pokemon/pikachuDefault.json",
+        "/js/pokemon/pikachuDefault.json"
+    ];
+    let controlKeys = {
+        up: {key: "DOM_VK_UP", name: "up arrow"},
+        down: {key: "DOM_VK_DOWN", name: "down arrow"},
+        left: {key: "DOM_VK_LEFT", name: "left arrow"},
+        right: {key: "DOM_VK_RIGHT", name: "right arrow"},
+        start: {key: "DOM_VK_ENTER", name: "enter"},
+        a: {key: "DOM_VK_A", name: "A"},
+        b: {key: "DOM_VK_B", name: "B"}
+    };
+    let battleInProg = false;
+    let battleCheck = false;
+    let battleProb = 0;
     let canvasTileSize = 16;
+
     let game = state(elementId, "Game");
     let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
     let gps = new Gps(draw, canvasTileSize, 13);
+    let battle = new Battle(draw, pokemonList,controlKeys);
     let player = new Player(draw, canvasTileSize);
     let storageMap = {
         up: "controlUp",
@@ -19,15 +40,6 @@ function gameState(elementId, draw, storage, debug=false){
         start: "controlStart",
         a: "controlA",
         b: "controlB"
-    };
-    let controlKeys = {
-        up: {key: "DOM_VK_UP", name: "up arrow"},
-        down: {key: "DOM_VK_DOWN", name: "down arrow"},
-        left: {key: "DOM_VK_LEFT", name: "left arrow"},
-        right: {key: "DOM_VK_RIGHT", name: "right arrow"},
-        start: {key: "DOM_VK_ENTER", name: "enter"},
-        a: {key: "DOM_VK_A", name: "A"},
-        b: {key: "DOM_VK_B", name: "B"}
     };
 
     map.onReady(function () {
@@ -48,12 +60,34 @@ function gameState(elementId, draw, storage, debug=false){
         player.setCurrentTileFn(function () {
             return map.queryPos(gps.getCurrentMapPos());
         });
+
+        battleCheck = function () {
+            let pos = map.queryPos(gps.getCurrentMapPos());
+            if(pos.attribute.hasOwnProperty("grass")){
+                if(battleProb > 77){
+                    exploreAudio.currentTime = 0;
+                    exploreAudio.pause();
+                    battleAudio.play();
+                    battleInProg = true;
+                    battle.setFinishFn(function () {
+                        gps.clearProb();
+                        battleInProg = false;
+                    });
+                    battle.setPlayerPokemon(player.getPokemonList());
+                }
+            }
+        };
     });
 
     let gameUpdate = function (time, inputs) {
         let now = performance.now();
-        if (startAudio){
+        if (!battleInProg){
+            battleAudio.currentTime = 0;
+            battleAudio.pause();
             exploreAudio.play();
+        }
+        else {
+            battleAudio.play();
         }
         exploreAudio.addEventListener("ended", function(){
             exploreAudio.currentTime = 0;
@@ -66,9 +100,11 @@ function gameState(elementId, draw, storage, debug=false){
                 }
                 exploreAudio.currentTime = 0;
                 exploreAudio.pause();
+                battleAudio.currentTime = 0;
+                battleAudio.pause();
                 game.changeState("mainMenu");
             }
-
+            if(!battleInProg){
                 if(inputs[KeyEvent[controlKeys.up.key]]){
                     gps.move(now, "up");
                     player.move(now, "up");
@@ -107,16 +143,24 @@ function gameState(elementId, draw, storage, debug=false){
                 }
                 gps.gpsUpdate(now);
                 player.playerUpdate(now);
+                battleProb = gps.getBattleProb();
+                //Check for grass
+                if(battleCheck) battleCheck();
+            }else{
+                battle.update(now, inputs);
+            }
             resolve();
         })
     };
 
     let gameRender = function () {
-
+        if(!battleInProg){
             draw.beginRender();
             map.draw(gps.getMapRange(), gps.getOffset());
             player.draw();
-
+        }else{
+            battle.draw();
+        }
     };
 
     game.init(gameRender, gameUpdate);

@@ -17,6 +17,7 @@ let Map = function(mapPath, draw, canvasTileSize){
     //Helper Functions
     let fetchMap = function () {
         return new Promise(function(response, reject){
+            //forgot exact link but found on stack overflow somewhere...
             fetch(mapPath).then(response=>response.json()).then(json=>{
                 mapFile = json;
                 response({});

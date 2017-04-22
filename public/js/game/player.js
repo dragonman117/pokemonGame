@@ -4,6 +4,7 @@
 
 
 let Player = function (draw, canvasTileSize) {
+    let grassAudio = new Audio('firered_0094.wav');
     let pos = {};
     let spec = {
         index:{
@@ -23,6 +24,9 @@ let Player = function (draw, canvasTileSize) {
     let playerImg = draw.ImgSprite(spec);
     let ready = false;
     let speedDivisor = 125;
+    let pokemonList = [
+        new PokemonElm("/js/pokemon/pikachuDefault.json",draw,3)
+    ];
 
     let movementAnimations = {
         'down':{
@@ -96,7 +100,10 @@ let Player = function (draw, canvasTileSize) {
         let tile = null;
         let height = 16;
         if(currentTileFn) tile = currentTileFn();
-        if(tile && tile.attribute.hasOwnProperty("grass")) height = 13;
+        if(tile && tile.attribute.hasOwnProperty("grass")){
+            height = 13;
+            grassAudio.play();
+        }
         if(moveInProgress){
             //Animate
             //let now = performance.now();
@@ -133,12 +140,17 @@ let Player = function (draw, canvasTileSize) {
         currentTileFn = fn;
     };
 
+    let getPokemonList = function () {
+        return pokemonList;
+    };
+
     return {
         draw:playerDraw,
         setStartPos:setStartPos,
         move:move,
         stopMove:stopMove,
         playerUpdate:playerUpdate,
-        setCurrentTileFn:setCurrentTileFn
+        setCurrentTileFn:setCurrentTileFn,
+        getPokemonList:getPokemonList
     }
 };
