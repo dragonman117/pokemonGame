@@ -30,7 +30,9 @@ let Battle = function (draw, pokemonList, controlKeys) {
         two: false,
         three: false,
         four: false,
-        five: false
+        five: false,
+        six: false,
+        eight: false,
     };
     let animiationStage = {
         one: null,
@@ -112,6 +114,9 @@ let Battle = function (draw, pokemonList, controlKeys) {
         height: 3,
         source:"/img/healthTile.png"
     });
+    let oHealthValue = helthMaxWidth;
+    let oHealthIndex = "green";
+    let oFaint = false;
 
     //Trainer
     let trainer = draw.ImgSprite({
@@ -214,8 +219,13 @@ let Battle = function (draw, pokemonList, controlKeys) {
         height: 2,
         source:"/img/experienceTile.png"
     });
+    let pHealthValue = helthMaxWidth;
+    let pHealthIndex = "green";
+    let pFaint = false;
+    let experienceGain = 0;
+    let initExperince = 0;
 
-    //MoveSelection
+    //DecisionSelection
     let sOption1 = draw.Text({
         pos:{
             x: 108,
@@ -251,6 +261,93 @@ let Battle = function (draw, pokemonList, controlKeys) {
     };
     let currentSelectPos = "one";
 
+    //Move Selection
+    let moveBg = draw.ImgStatic({
+        center:{
+            x: 104,
+            y: 21
+        },
+        width:208,
+        height: 48,
+        source:"/img/fightBg.png"
+    });
+    let ppLable = draw.Text({
+        pos:{x:147, y:164},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:"PP"});
+    let ppVal = draw.Text({
+        pos:{x:162, y:164},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:""});
+    let typeLable = draw.Text({
+        pos:{x:147, y:178},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:"Type"});
+    let typeVal = draw.Text({
+        pos:{x:177, y:178},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:""});
+    let atk1 = draw.Text({
+        pos:{x:16, y:164},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:"atk1"});
+    let atk2 = draw.Text({
+        pos:{x:16, y:179},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:"atk2"});
+    let atk3 = draw.Text({
+        pos:{x:75, y:164},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:"atk3"});
+    let atk4 = draw.Text({
+        pos:{x:75, y:179},
+        font:"5pt Pokemon GB",
+        fill:"black",
+        stroke:"transparent",
+        rotation:0,
+        text:"atk4"});
+    let movePos = {
+        one:{x:12, y:167},
+        two:{x:12, y:181},
+        three:{x:71, y:167},
+        four:{x:71, y:181}
+    };
+    let currentMovePos = "one";
+
+    //Attack Globals
+    let playerAttack = null;
+    let pAttackName = "";
+    let oAttack = null;
+    let oCurMove = "";
+    let oAttackName = "";
+    let pDamage = 0;
+    let oDamage = 0;
+    let oHealthBat = {};
+    let pHealthBat = {};
+
+    let initOponet = false;
+
 
     let battleUpdate = function (time, inputs) {
         bg.update(spec.center);
@@ -263,13 +360,17 @@ let Battle = function (draw, pokemonList, controlKeys) {
         }
         let dif = time - batleStart ;
         if(opponent){
+            if(!initOponet){
+                opponent.setLevel(Math.floor((Math.random()*10)%5)+1);
+                initOponet = true;
+            }
             opponent.update(time);
             oName.update(opponent.getName());
-            oLevel.update("Lv" + opponent.getLevel())
+            oLevel.update("Lv" + opponent.getLevel());
         }
         if(phases.one){
             tbLine1.update("Wild " + opponent.getName() + " appeared!");
-            oHealth.update({x:49,y:45}, healthIndex.green, 3,3,9,helthMaxWidth);
+            oHealth.update({x:49,y:45}, healthIndex[oHealthIndex], 3,3,9,oHealthValue);
             if(dif%500 > 250){
                 dwnArrowCener.y  = 171;
             }else{
@@ -277,10 +378,16 @@ let Battle = function (draw, pokemonList, controlKeys) {
             }
             dwnArrow.update(dwnArrowCener);
             if(inputs[KeyEvent[controlKeys.a.key]]){
-                phases.one = false;
-                phases.two = true;
-                animiationStage.one = time;
-                tbLine1.update("");
+                if(player.getHP() > 0){
+                    phases.one = false;
+                    phases.two = true;
+                    animiationStage.one = time;
+                    tbLine1.update("");
+                }else{
+                    phases.one = false;
+                    phases.eight = true;
+                    aBtnBlock = true;
+                }
             }
         }
         if(phases.two){
@@ -369,19 +476,23 @@ let Battle = function (draw, pokemonList, controlKeys) {
                 }
             }
             if(inputs[KeyEvent[controlKeys.a.key]]){
+                if(currentSelectPos==="one"){
+                    aBtnBlock = true;
+                    phases.three = false;
+                    phases.five = true;
+                }
                 if(currentSelectPos==="two"){
                     aBtnBlock = true;
                     phases.three = false;
                     phases.four = true;
                 }
             }
-            tbLine1.update("");
             player.bounce(true);
             player.update(time);
             dBgBox.update({x:155,y:132});
             pLevel.update("Lv" + player.getLevel());
             pName.update(player.getName());
-            pHealth.update({x:151,y:131}, healthIndex.green, 3,3,9,helthMaxWidth);
+            pHealth.update({x:151,y:131}, healthIndex[pHealthIndex], 3,3,9,pHealthValue);
             pExperience.update({x:135,y:147}, {r:0,c:0}, 2,2,7,Math.floor(expMax*player.getExperincePercent()));
             tbLine1.update("What will");
             tbLine2.update(player.getName() + " do");
@@ -395,7 +506,7 @@ let Battle = function (draw, pokemonList, controlKeys) {
             dBgBox.update({x:155,y:132});
             pLevel.update("Lv" + player.getLevel());
             pName.update(player.getName());
-            pHealth.update({x:151,y:131}, healthIndex.green, 3,3,9,helthMaxWidth);
+            pHealth.update({x:151,y:131}, healthIndex[pHealthIndex], 3,3,9,pHealthValue);
             pExperience.update({x:135,y:147}, {r:0,c:0}, 2,2,7,Math.floor(expMax*player.getExperincePercent()));
             tbLine1.update("Got Away Safely!");
             tbLine2.update("");
@@ -414,6 +525,240 @@ let Battle = function (draw, pokemonList, controlKeys) {
                 aBtnBlock = false;
             }
         }
+        if(phases.five){
+            tbLine1.update("");
+            tbLine2.update("");
+            player.bounce(true);
+            player.update(time);
+            dBgBox.update({x:155,y:132});
+            pLevel.update("Lv" + player.getLevel());
+            pName.update(player.getName());
+            pHealth.update({x:151,y:131}, healthIndex[pHealthIndex], 3,3,9,pHealthValue);
+            pExperience.update({x:135,y:147}, {r:0,c:0}, 2,2,7,Math.floor(expMax*player.getExperincePercent()));
+            moveBg.update({x:104, y:177});
+            selector.update(movePos[currentMovePos]);
+            atk1.update(player.getAttackName("one").substr(0,8));
+            atk2.update(player.getAttackName("two").substr(0,8));
+            atk3.update(player.getAttackName("three").substr(0,8));
+            atk4.update(player.getAttackName("four").substr(0,8));
+            let ppTmp = player.getAttackPP(currentMovePos);
+            ppVal.update(ppTmp.c + " / " + ppTmp.total);
+            typeVal.update(player.getAttackType(currentMovePos));
+            if(inputs[KeyEvent[controlKeys.b.key]]){
+                currentMovePos = "one";
+                phases.five = false;
+                phases.three = true;
+            }
+            if(inputs[KeyEvent[controlKeys.up.key]]){
+                if(currentMovePos === "two"){
+                    currentMovePos = "one";
+                }
+                if(currentMovePos === "four"){
+                    currentMovePos = "three";
+                }
+            }
+            if(inputs[KeyEvent[controlKeys.down.key]]){
+                if(currentMovePos === "one") currentMovePos = "two";
+                if(currentMovePos === "three") currentMovePos = "four";
+            }
+            if(inputs[KeyEvent[controlKeys.right.key]]){
+                if(currentMovePos === "one") currentMovePos = "three";
+                if(currentMovePos === "two") currentMovePos = "four";
+            }
+            if(inputs[KeyEvent[controlKeys.left.key]]){
+                if(currentMovePos === "three") currentMovePos = "one";
+                if(currentMovePos === "four") currentMovePos = "two";
+            }
+            if(inputs[KeyEvent[controlKeys.a.key]]){
+                if(!aBtnBlock){
+                    if(player.getAttackPP(currentMovePos).c > 0){
+                        playerAttack = player.selAttack(currentMovePos);
+                        pAttackName = player.getAttackName(currentMovePos);
+                        let moves = Object.keys(movePos);
+                        let i = Math.floor(Math.random()* moves.length);
+                        oAttack = opponent.selAttack(moves[i]);
+                        oCurMove = moves[i];
+                        oAttackName = opponent.getAttackName(moves[i]);
+                        pDamage = damageCalc(player, opponent, playerAttack);
+                        oDamage = damageCalc(opponent, player, oAttack);
+                        phases.five = false;
+                        phases.six = true;
+                        animiationStage.one = time;
+                    }
+                    aBtnBlock = true;
+                }
+            }else{
+                aBtnBlock = false;
+            }
+        }
+        if(phases.six){
+            player.bounce(false);
+            player.update(time);
+            dBgBox.update({x:155,y:132});
+            pLevel.update("Lv" + player.getLevel());
+            pName.update(player.getName());
+            pExperience.update({x:135,y:147}, {r:0,c:0}, 2,2,7,Math.floor(expMax*player.getExperincePercent()));
+            if(animiationStage.one){
+                tbLine1.update(player.getName() + " used");
+                tbLine2.update(pAttackName);
+                let ldiff = time = animiationStage.one;
+                if(ldiff > 400){
+                    oHealthBat = opponent.takeDamage(pDamage);
+                    animiationStage.one = false;
+                    animiationStage.two = time;
+                }
+            }
+            if(animiationStage.two){
+                let oHealthBar = (oHealthBat.c/oHealthBat.t);
+                if(oHealthBar <= .15){
+                    oHealthIndex = "red";
+                }else if( oHealthBar <= .5){
+                    oHealthIndex = "yellow";
+                }
+                oHealthBar = Math.floor(oHealthBar * helthMaxWidth);
+                let diff = oHealthValue - oHealthBar;
+                let ldiff = time - animiationStage.two;
+                oHealthValue = oHealthValue -  Math.floor((ldiff/800)*diff);
+                oHealth.update({x:49,y:45}, healthIndex[oHealthIndex], 3,3,9,oHealthValue);
+                player.updateAttack(ldiff, currentMovePos);
+                //Need to do attack
+                if(ldiff > 800 ){
+                    animiationStage.two = false;
+                    animiationStage.three = time;
+                    oHealthValue = oHealthBar;
+                    if(oHealthBat.c <= 0){
+                        oFaint = true;
+                        animiationStage.three = false;
+                        phases.six = false;
+                        phases.seven = true;
+                        animiationStage.one = true;
+                    }
+                }
+            }
+            if(animiationStage.three){
+                let diff = time - animiationStage.three;
+                if(diff > 160 ){
+                    tbLine1.update(opponent.getName() + " used");
+                    tbLine2.update(oAttackName);
+                }else{
+                    tbLine1.update("");
+                    tbLine2.update("");
+                }
+                if(diff > 560){
+                    pHealthBat = player.takeDamage(oDamage);
+                    animiationStage.three = false;
+                    animiationStage.four = time;
+                }
+            }
+            if(animiationStage.four){
+                let pHealthBar = (pHealthBat.c/pHealthBat.t);
+                if(pHealthBar <= .15){
+                    pHealthIndex = "red";
+                }else if( pHealthBar <= .5){
+                    pHealthIndex = "yellow";
+                }
+                pHealthBar = Math.floor(pHealthBar * helthMaxWidth);
+                let diff = pHealthValue - pHealthBar;
+                let ldiff = time - animiationStage.four;
+                pHealthValue = pHealthValue -  Math.floor((ldiff/800)*diff);
+                pHealth.update({x:151,y:131}, healthIndex[pHealthIndex], 3,3,9,pHealthValue);
+                opponent.updateAttack(ldiff, oCurMove);
+                if(ldiff > 800 ){
+                    animiationStage.four = false;
+                    pHealthValue = pHealthBar;
+                    //Animation is over...
+                    if(pHealthBat.c <= 0){
+                        pFaint = true;
+                        animiationStage.four = false;
+                        phases.six = false;
+                        phases.seven = true;
+                        animiationStage.one = true;
+                    }else{
+                        phases.six = false;
+                        phases.three = true;
+                    }
+                }
+            }
+        }
+        if(phases.seven){
+            player.bounce(false);
+            player.update(time);
+            dBgBox.update({x:155,y:132});
+            pLevel.update("Lv" + player.getLevel());
+            pName.update(player.getName());
+            if(dif%500 > 250){
+                dwnArrowCener.y  = 171;
+            }else{
+                dwnArrowCener.y = 172;
+            }
+            dwnArrow.update(dwnArrowCener);
+            if(animiationStage.one){
+                if(oFaint){
+                    tbLine1.update("Wild " + opponent.getName());
+                    tbLine2.update("fainted!");
+                }else{
+                    tbLine1.update(player.getName());
+                    tbLine2.update("fainted!");
+                }
+                if(inputs[KeyEvent[controlKeys.a.key]]){
+                    if(!aBtnBlock){
+                        if(oFaint){
+                            animiationStage.one = false;
+                            animiationStage.two = time;
+                            experienceGain = Math.pow(opponent.getLevel(), 3);
+                        }else{
+                            animiationStage.one = false;
+                            finishFn();
+                            reset();
+                            return;
+                        }
+                        aBtnBlock = true;
+                    }
+                }else{
+                    aBtnBlock = false;
+                }
+            }
+            if(animiationStage.two){
+                tbLine1.update(player.getName() + " gained");
+                tbLine2.update(experienceGain + " EXP. Points!");
+                if(inputs[KeyEvent[controlKeys.a.key]]){
+                    if(!aBtnBlock){
+                        animiationStage.two = false;
+                        animiationStage.three = time;
+                        initExperince = player.getExperincePercent();
+                        player.addExp(experienceGain);
+                        aBtnBlock = true;
+                    }
+                }else{
+                    aBtnBlock = false;
+                }
+            }
+            if(animiationStage.three){
+                let diff = time - animiationStage.three;
+                let epdiff = player.getExperincePercent() - initExperince;
+                if(epdiff <= 0) epdiff = 1;
+                let expUpdate = expMax*((diff/800) * epdiff);
+                pExperience.update({x:135,y:147}, {r:0,c:0}, 2,2,7,Math.floor(expUpdate));
+                if(diff > 800){
+                    animiationStage.three = false;
+
+                    finishFn();
+                    reset();
+                }
+            }
+        }
+        if(phases.eight){
+            tbLine1.update(player.getName() + " fainted!");
+            tbLine2.update("You ran away!");
+            if(inputs[KeyEvent[controlKeys.a.key]]){
+                if(!aBtnBlock){
+                    finishFn();
+                    reset();
+                }
+            }else{
+                aBtnBlock = false;
+            }
+        }
     };
 
     let battleDraw = function () {
@@ -421,7 +766,7 @@ let Battle = function (draw, pokemonList, controlKeys) {
         bg.draw();
         tbLine1.draw();
         tbLine2.draw();
-        if(opponent){
+        if(opponent && !oFaint){
             opponent.draw();
             oBgBox.draw();
             oName.draw();
@@ -467,6 +812,54 @@ let Battle = function (draw, pokemonList, controlKeys) {
             pExperience.draw();
             dwnArrow.draw();
         }
+        if(phases.five){
+            player.draw();
+            //Ready to draw the Defend box
+            dBgBox.draw();
+            pLevel.draw();
+            pName.draw();
+            pHealth.draw();
+            pExperience.draw();
+            moveBg.draw();
+            ppLable.draw();
+            ppVal.draw();
+            typeLable.draw();
+            typeVal.draw();
+            selector.draw();
+            atk1.draw();
+            atk2.draw();
+            atk3.draw();
+            atk4.draw();
+        }
+        if(phases.six){
+            player.draw();
+            if(animiationStage.two){
+                player.renderAttack(currentMovePos);
+            }
+            if(animiationStage.four){
+                opponent.renderAttack(oCurMove);
+            }
+            dBgBox.draw();
+            pLevel.draw();
+            pName.draw();
+            pHealth.draw();
+            pExperience.draw();
+
+        }
+        if(phases.seven){
+            if(!pFaint){
+                player.draw();
+                dBgBox.draw();
+                pLevel.draw();
+                pName.draw();
+                pHealth.draw();
+                pExperience.draw();
+            }
+            dwnArrow.draw();
+        }
+        if(phases.eight){
+            dwnArrow.draw();
+        }
     };
 
     let reset = function () {
@@ -478,13 +871,38 @@ let Battle = function (draw, pokemonList, controlKeys) {
         phases.three = false;
         phases.four = false;
         phases.five = false;
+        phases.six = false;
+        phases.seven = false;
+        phases.eight = false;
         currentSelectPos = "one";
+        currentMovePos = "one";
+        helthMaxWidth = 48;
+        expMax = 64;
+        playerAttack = null;
+        pAttackName = "";
+        oAttack = null;
+        oAttackName = "";
+        pDamage = 0;
+        oDamage = 0;
+        oHealthBat = {};
+        pHealthBat = {};
+        pFaint = false;
+        experienceGain = 0;
+        initExperince = 0;
+        oHealthValue = helthMaxWidth;
+        oHealthIndex = "green";
+        oFaint = false;
     };
 
     let setPlayerPokemon = function (pList) {
         playerList = pList;
         player = playerList[0];
         player.setSide("defend");
+    };
+
+    let damageCalc = function (attack, defend, power) {
+        let randVal = ((Math.floor(Math.random() * 100))%15)/100 + .85;
+        return Math.round(((((2 * attack.getLevel())/5 + 2) * power * (attack.getAttack() / defend.getDefence()))/50 + 2) * randVal);
     };
 
     let setFinishFn = function (fn) {

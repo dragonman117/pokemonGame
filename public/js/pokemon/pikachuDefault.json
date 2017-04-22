@@ -1,12 +1,18 @@
 {
   "name":"Pikachu",
-  "hp":35,
-  "level":3,
+  "hp":40,
+  "level":5,
   "pointsToNextLevel":50,
   "stats":{
-    "attack":55,
-    "defense":30,
+    "attack":59,
+    "defense":34,
     "speed": 90
+  },
+  "attacks":{
+    "one":"/js/attacks/quckAttack.json",
+    "two":"/js/attacks/thunderShock.json",
+    "three":"/js/attacks/growl.json",
+    "four":"/js/attacks/shock.json"
   },
   "img":"/img/pokemon/pikachu.png"
 }

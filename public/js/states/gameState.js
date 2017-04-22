@@ -5,10 +5,10 @@
 function gameState(elementId, draw, storage, debug=false){
     //pokemon :)
     let pokemonList = [
-        "/js/pokemon/pikachuDefault.json",
-        "/js/pokemon/pikachuDefault.json",
-        "/js/pokemon/pikachuDefault.json",
-        "/js/pokemon/pikachuDefault.json"
+        "/js/pokemon/rattata.json",
+        "/js/pokemon/pidgey.json",
+        "/js/pokemon/sparrow.json",
+        "/js/pokemon/nidoran.json"
     ];
     let controlKeys = {
         up: {key: "DOM_VK_UP", name: "up arrow"},
@@ -64,7 +64,7 @@ function gameState(elementId, draw, storage, debug=false){
         battleCheck = function () {
             let pos = map.queryPos(gps.getCurrentMapPos());
             if(pos.attribute.hasOwnProperty("grass")){
-                if(battleProb > 0){
+                if(battleProb > 73){
                     battleInProg = true;
                     battle.setFinishFn(function () {
                         gps.clearProb();

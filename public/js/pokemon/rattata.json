@@ -1,0 +1,18 @@
+{
+  "name":"Rattata",
+  "hp":30,
+  "level":3,
+  "pointsToNextLevel":50,
+  "stats":{
+    "attack":56,
+    "defense":35,
+    "speed": 72
+  },
+  "attacks":{
+    "one":"/js/attacks/tackle.json",
+    "two":"/js/attacks/tailWhip.json",
+    "three":"/js/attacks/growl.json",
+    "four":"/js/attacks/growl.json"
+  },
+  "img":"/img/pokemon/rattata.png"
+}

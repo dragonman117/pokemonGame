@@ -3,16 +3,18 @@
  */
 
 
-let PokemonElm = function (specFilePath, draw, initLevel = 3) {
+let PokemonElm = function (specFilePath, draw) {
     let rawSpec = NaN;
     let hp = 0;
+    let totalHp = 0;
     let name = "";
-    let moves = {};
     let experince = 0;
     let expToNextLevel = 0;
-    let level = initLevel;
+    let level = 0;
     let ready = false;
     let avitar = NaN;
+    let attacks = {};
+    let stats = {};
 
     let drawFace = {
         front: {
@@ -54,6 +56,8 @@ let PokemonElm = function (specFilePath, draw, initLevel = 3) {
     let processSpec = function () {
         name = rawSpec.name;
         hp = rawSpec.hp;
+        totalHp = rawSpec.hp;
+        level = rawSpec.level;
         avitar = draw.ImgSprite({
             index:drawFace[currentDraw],
             position:posSets[currentDraw],
@@ -64,6 +68,11 @@ let PokemonElm = function (specFilePath, draw, initLevel = 3) {
             source: rawSpec.img
         });
         expToNextLevel = rawSpec.pointsToNextLevel;
+        let keys = ["one","two","three","four"];
+        for(let i = 0; i < keys.length; i++){
+            attacks[keys[i]] = new Attack(rawSpec.attacks[keys[i]], draw);
+        }
+        stats = rawSpec.stats;
         ready = true;
     };
     let initPokemon = function () {
@@ -77,6 +86,23 @@ let PokemonElm = function (specFilePath, draw, initLevel = 3) {
 
     let getLevel = function () {
         return level;
+    };
+
+    let setLevel = function(nlevel){
+        if(nlevel < level){
+            let diff = level - nlevel;
+            hp *= hp - (diff*5);
+            stats.attack = stats.attack - (diff*2);
+            stats.defence = stats.defence - (diff*2);
+            level = nlevel;
+        }
+        else if(nlevel > level){
+            let diff = nlevel - level;
+            hp *= hp + (diff*5);
+            stats.attack = stats.attack + (diff*2);
+            stats.defence = stats.defence + (diff*2);
+            level = nlevel;
+        }
     };
 
     let drawPokemon = function () {
@@ -115,10 +141,76 @@ let PokemonElm = function (specFilePath, draw, initLevel = 3) {
     let getExperincePercent = function () {
         return experince/expToNextLevel;
     };
+
     let bounce = function (val) {
         toBounce = val;
         bounceStart = null;
     };
+
+    let getAttackName = function(id){
+        return attacks[id].getName();
+    };
+
+    let getAttackPP = function (id) {
+        return attacks[id].getPP();
+    };
+
+    let getHP = function () {
+        return hp;
+    };
+
+    let getAttackType = function (id) {
+        return attacks[id].getType();
+    };
+
+    let selAttack = function (id) {
+        attacks[id].reduceByOne();
+        return attacks[id].getPower();
+    };
+
+    let getAttack = function () {
+        return stats.attack;
+    };
+
+    let getDefence = function () {
+        return stats.defense;
+    };
+
+    let takeDamage = function (damage) {
+        hp -= damage;
+        if(hp <= 0) hp = 0;
+        return {c:hp, t:totalHp};
+    };
+
+    let addExp = function (total) {
+        experince += total;
+        if(experince > expToNextLevel){
+            level += 1;
+            experince -= expToNextLevel;
+            expToNextLevel += Math.floor(expToNextLevel/2);
+            totalHp += level;
+            hp += level;
+            stats.attack += 2;
+            stats.defence += 2;
+        }
+    };
+
+    let renderAttack = function (id) {
+        if(currentDraw !== "front"){
+            attacks[id].render("A");
+        }else{
+            attacks[id].render("B");
+        }
+    };
+
+    let updateAttack = function(time, id){
+        if(currentDraw !== "front"){
+            attacks[id].attackUpdate(time, "A");
+        }else{
+            attacks[id].attackUpdate(time, "B");
+        }
+    };
+
 
     //Startup
     initPokemon();
@@ -130,6 +222,18 @@ let PokemonElm = function (specFilePath, draw, initLevel = 3) {
         setSide:setSide,
         update:updatePokemon,
         getExperincePercent:getExperincePercent,
-        bounce:bounce
+        bounce:bounce,
+        getAttackName:getAttackName,
+        getAttackPP:getAttackPP,
+        getHP:getHP,
+        getAttackType:getAttackType,
+        selAttack:selAttack,
+        getAttack:getAttack,
+        getDefence:getDefence,
+        takeDamage:takeDamage,
+        addExp:addExp,
+        renderAttack:renderAttack,
+        updateAttack:updateAttack,
+        setLevel:setLevel
     }
 };
