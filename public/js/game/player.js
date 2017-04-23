@@ -4,6 +4,7 @@
 
 
 let Player = function (draw, canvasTileSize) {
+    let grassAudio = new Audio('firered_0094.wav');
     let pos = {};
     let initPosY = 0;
     let spec = {
@@ -116,8 +117,11 @@ let Player = function (draw, canvasTileSize) {
         let height = 16;
         if(currentTileFn) tile = currentTileFn();
         if(ledgeCheck)ledge = ledgeCheck();
-        if(tile && tile.attribute.hasOwnProperty("grass")) height = 13;
-        pos.y = initPosY;
+        if(tile && tile.attribute.hasOwnProperty("grass")){
+            height = 13;
+            grassAudio.play();
+        }
+        if(ledgeCheck)ledge = ledgeCheck();
         if(moveInProgress){
             //Animate
             //let now = performance.now();

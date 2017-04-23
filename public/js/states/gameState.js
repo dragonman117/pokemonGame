@@ -3,6 +3,9 @@
  */
 
 function gameState(elementId, draw, storage, debug=false){
+    let exploreAudio = new Audio('explore.mp3');
+    let battleAudio = new Audio('battle.mp3');
+    let startAudio = true;
     //pokemon :)
     let pokemonList = [
         "/js/pokemon/rattata.json",
@@ -22,9 +25,7 @@ function gameState(elementId, draw, storage, debug=false){
     let battleInProg = false;
     let battleCheck = false;
     let battleProb = 0;
-    let exploreAudio = new Audio('explore.mp3');
-    let battleAudio = new Audio('battle.mp3');
-    let startAudio = true;
+
     let canvasTileSize = 16;
 
     let game = state(elementId, "Game");
@@ -68,7 +69,10 @@ function gameState(elementId, draw, storage, debug=false){
         battleCheck = function () {
             let pos = map.queryPos(gps.getCurrentMapPos());
             if(pos.attribute.hasOwnProperty("grass")){
-                if(battleProb > 100){
+                if(battleProb > 73){
+                    exploreAudio.currentTime = 0;
+                    exploreAudio.pause();
+                    battleAudio.play();
                     battleInProg = true;
                     console.log("i started");
                     battle.setFinishFn(function () {
@@ -83,8 +87,13 @@ function gameState(elementId, draw, storage, debug=false){
 
     let gameUpdate = function (time, inputs) {
         let now = performance.now();
-        if (startAudio){
+        if (!battleInProg){
+            battleAudio.currentTime = 0;
+            battleAudio.pause();
             exploreAudio.play();
+        }
+        else {
+            battleAudio.play();
         }
         exploreAudio.addEventListener("ended", function(){
             exploreAudio.currentTime = 0;
@@ -97,6 +106,8 @@ function gameState(elementId, draw, storage, debug=false){
                 }
                 exploreAudio.currentTime = 0;
                 exploreAudio.pause();
+                battleAudio.currentTime = 0;
+                battleAudio.pause();
                 game.changeState("mainMenu");
             }
 
@@ -158,7 +169,6 @@ function gameState(elementId, draw, storage, debug=false){
         }else{
             battle.draw();
         }
-
     };
 
     game.init(gameRender, gameUpdate);
