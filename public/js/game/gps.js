@@ -37,6 +37,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
     let speedDivisor = 16;
     let onMoveEndFn = NaN;
 
+    let ledge = false;
+
     let cCheckFn = NaN;
 
     let battleProb = 0;
@@ -78,7 +80,12 @@ let Gps = function (draw, tileSize, canvasGrid) {
             }
             if(movement.down){
                 range.y2 += 1;
-                offset.y -= tileSize - moveOffset;
+                if(ledge){
+                    range.y2 += 1;
+                    offset.y -= 2*tileSize - moveOffset;
+                }else{
+                    offset.y -= tileSize - moveOffset;
+                }
             }
             if(movement.right){
                 range.x2 +=1;
@@ -130,9 +137,21 @@ let Gps = function (draw, tileSize, canvasGrid) {
             if(collisionCurrent === null) collisionCurrent = current;
             if(nearby.me.walls[collisionCurrent]) collision = true;
             if(nearby[current] && nearby[current].walls[collisionComp[current]]) collision = true;
+            if(nearby[current] && collision && current ==="down"){
+                //todo: trigger the jump animation...
+                if(nearby[current].attribute.hasOwnProperty("ledge")){
+                    collision = false;
+                    ledge = true;
+                }
+            }
+
+
             let timeDiff = now - movement[current];
             if(timeDiff < 250){
-                if(!collision)moveOffset = tileSize - Math.floor(timeDiff/speedDivisor);
+                if(!collision){
+                    moveOffset = tileSize - Math.floor(timeDiff/speedDivisor);
+                    if(ledge)moveOffset = (2*tileSize) - Math.floor(timeDiff/(speedDivisor/2));
+                }
                 else moveOffset = 0;
             }else{
                 if(!collision){
@@ -140,6 +159,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
                     if(movement.down)logicalPosRelMap.y += 1;
                     if(movement.left)logicalPosRelMap.x -= 1;
                     if(movement.right)logicalPosRelMap.x += 1;
+                    if(ledge)logicalPosRelMap.y += 1;
+                    ledge = false;
                 }
                 if(caryOn){
                     moveOffset = speedDivisor;
@@ -205,6 +226,10 @@ let Gps = function (draw, tileSize, canvasGrid) {
         battleProb = 0;
     };
 
+    let getLedge = function () {
+        return ledge;
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -218,6 +243,7 @@ let Gps = function (draw, tileSize, canvasGrid) {
         setCollisionCheckFunction:setCollisionCheckFunction,
         getCurrentMapPos:getCurrentMapPos,
         getBattleProb:getBattleProb,
-        clearProb:clearProb
+        clearProb:clearProb,
+        getLedge:getLedge
     }
 };
