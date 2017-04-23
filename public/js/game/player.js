@@ -5,6 +5,7 @@
 
 let Player = function (draw, canvasTileSize) {
     let pos = {};
+    let initPosY = 0;
     let spec = {
         index:{
             r: 0,
@@ -21,10 +22,23 @@ let Player = function (draw, canvasTileSize) {
         source: "/img/playerSheet.png"
     };
     let playerImg = draw.ImgSprite(spec);
+    let playerShadow = draw.ImgSprite({
+        index: {r:0,c:0},
+        position: {x:0,y:0},
+        tileHeight: 16,
+        tileWidth: 16,
+        width: canvasTileSize,
+        height: canvasTileSize,
+        source: "/img/shadow.png"
+    });
     let ready = false;
     let speedDivisor = 125;
+
+    let ledgeCheck = NaN;
+    let ledge = false;
+
     let pokemonList = [
-        new PokemonElm("/js/pokemon/pikachuDefault.json",draw,3)
+        new PokemonElm("/js/pokemon/pikachuDefault.json",draw)
     ];
 
     let movementAnimations = {
@@ -84,6 +98,7 @@ let Player = function (draw, canvasTileSize) {
 
     let playerDraw = function () {
         if(ready){
+            if(ledge) playerShadow.draw();
             playerImg.draw();
         }
     };
@@ -92,6 +107,7 @@ let Player = function (draw, canvasTileSize) {
         pos = startPos;
         spec.position.x = startPos.x;
         spec.position.y = startPos.y;
+        initPosY = startPos.y;
         ready = true;
     };
 
@@ -99,7 +115,9 @@ let Player = function (draw, canvasTileSize) {
         let tile = null;
         let height = 16;
         if(currentTileFn) tile = currentTileFn();
+        if(ledgeCheck)ledge = ledgeCheck();
         if(tile && tile.attribute.hasOwnProperty("grass")) height = 13;
+        pos.y = initPosY;
         if(moveInProgress){
             //Animate
             //let now = performance.now();
@@ -110,11 +128,13 @@ let Player = function (draw, canvasTileSize) {
             if(movement.left) current = "left";
             let timeDiff = time - movement[current];
             let indexOffset = Math.floor(timeDiff/speedDivisor)%movementAnimations[current].animation.length;
+            if(ledge) pos.y = initPosY - 7;
             currentDraw = movementAnimations[current].animation[indexOffset];
         }else{
             currentDraw = currentRest;
         }
         playerImg.update(pos,currentDraw, height, height);
+        playerShadow.update({x:pos.x,y:initPosY},{r:0,c:0});
     };
 
     let move = function (time, dir) {
@@ -136,6 +156,10 @@ let Player = function (draw, canvasTileSize) {
         currentTileFn = fn;
     };
 
+    let setLedgeCheckFn = function (fn) {
+        ledgeCheck = fn;
+    };
+
     let getPokemonList = function () {
         return pokemonList;
     };
@@ -147,6 +171,7 @@ let Player = function (draw, canvasTileSize) {
         stopMove:stopMove,
         playerUpdate:playerUpdate,
         setCurrentTileFn:setCurrentTileFn,
+        setLedgeCheckFn:setLedgeCheckFn,
         getPokemonList:getPokemonList
     }
 };

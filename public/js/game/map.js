@@ -7,6 +7,7 @@ let Map = function(mapPath, draw, canvasTileSize){
     let tileSets = {}; // array of tile sets (actual image)
     let mapFile = {};
     let masterMap = [];
+    let upperMap = [];
     let startPos = {x:0, y:0};
     let ready = false;
     let onReadyFn = NaN;
@@ -75,6 +76,7 @@ let Map = function(mapPath, draw, canvasTileSize){
 
         for(let i = 0; i < mapHeight; i++){
             masterMap.push([]);
+            upperMap.push([]);
             for(let j = 0; j < mapWidth; j++){
                 masterMap[i].push({
                     drawStack:[],
@@ -85,7 +87,17 @@ let Map = function(mapPath, draw, canvasTileSize){
                         right: false
                     },
                     attribute:{}
-                })
+                });
+                upperMap[i].push({
+                    drawStack:[],
+                    walls:{
+                        top: false,
+                        bot: false,
+                        left: false,
+                        right: false
+                    },
+                    attribute:{}
+                });
             }
         }
 
@@ -95,7 +107,7 @@ let Map = function(mapPath, draw, canvasTileSize){
             let count = 0;
             for(let i = 0; i < mapHeight; i++){
                 for(let j = 0; j < mapWidth; j++){
-                    if(mapFile.layers[x].data[count] !== 0){
+                    if(mapFile.layers[x].data[count] !== 0 && mapFile.layers[x].name !== "upper"){ // here is where we need to check layers for upper or lower...
                         masterMap[i][j].drawStack.push(mapFile.layers[x].data[count]);
                         let keys = Object.keys(tiles[mapFile.layers[x].data[count]].attr);
                         //console.log(keys);
@@ -126,6 +138,9 @@ let Map = function(mapPath, draw, canvasTileSize){
                                 }
                             }
                         }
+                    }
+                    if(mapFile.layers[x].data[count] !== 0 && mapFile.layers[x].name === "upper"){
+                        upperMap[i][j].drawStack.push(mapFile.layers[x].data[count]);
                     }
                     count++;
                 }
@@ -180,7 +195,6 @@ let Map = function(mapPath, draw, canvasTileSize){
     //Grids: {x1,x2,y1,y2}
     let drawMap = function (grids, offset) {
         if(ready){
-            draw.beginRender();
             let ix = offset.x;
             let iy = offset.y;
             let height = mapFile.height;
@@ -202,6 +216,31 @@ let Map = function(mapPath, draw, canvasTileSize){
             let keys = Object.keys(tileSets);
         }
     };
+
+    let drawUpper = function (grids, offset) {
+        if(ready){
+            let ix = offset.x;
+            let iy = offset.y;
+            let height = mapFile.height;
+            let width = mapFile.width;
+            for(let i = grids.y1; i < grids.y2; i++){
+                ix = offset.x;
+                for(let j = grids.x1; j < grids.x2; j++){
+                    let pos = {x:ix, y:iy};
+                    //console.log(pos);
+                    for(let x = 0; x < upperMap[i][j].drawStack.length; x++){
+                        //upperMap[i][j].drawStack[x]
+                        let tile = tiles[upperMap[i][j].drawStack[x]];
+                        tileSets[tile.img].draw(tile, pos);
+                    }
+                    ix += canvasTileSize;
+                }
+                iy += canvasTileSize;
+            }
+            let keys = Object.keys(tileSets);
+        }
+    };
+
     let getStart = function (){
         return {x:startPos.x, y:startPos.y};
     };
@@ -226,6 +265,7 @@ let Map = function(mapPath, draw, canvasTileSize){
 
     return{
         draw:drawMap,
+        drawUpper:drawUpper,
         getStart:getStart,
         onReady:onReady,
         getMapSize:getMapSize,

@@ -61,10 +61,14 @@ function gameState(elementId, draw, storage, debug=false){
             return map.queryPos(gps.getCurrentMapPos());
         });
 
+        player.setLedgeCheckFn(function () {
+            return gps.getLedge();
+        });
+
         battleCheck = function () {
             let pos = map.queryPos(gps.getCurrentMapPos());
             if(pos.attribute.hasOwnProperty("grass")){
-                if(battleProb > 73){
+                if(battleProb > 100){
                     battleInProg = true;
                     console.log("i started");
                     battle.setFinishFn(function () {
@@ -133,7 +137,7 @@ function gameState(elementId, draw, storage, debug=false){
                 }else{
                     gps.stopMove("left");
                 }
-                gps.gpsUpdate(now);
+                gps.gpsUpdate(now);//important goes before the player...
                 player.playerUpdate(now);
                 battleProb = gps.getBattleProb();
                 //Check for grass
@@ -150,6 +154,7 @@ function gameState(elementId, draw, storage, debug=false){
             draw.beginRender();
             map.draw(gps.getMapRange(), gps.getOffset());
             player.draw();
+            map.drawUpper(gps.getMapRange(), gps.getOffset());
         }else{
             battle.draw();
         }
