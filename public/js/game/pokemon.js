@@ -142,6 +142,10 @@ let PokemonElm = function (specFilePath, draw) {
         return experince/expToNextLevel;
     };
 
+    let getHpPercent = function () {
+        return hp/totalHp;
+    };
+
     let bounce = function (val) {
         toBounce = val;
         bounceStart = null;
@@ -211,6 +215,14 @@ let PokemonElm = function (specFilePath, draw) {
         }
     };
 
+    let heal = function () {
+        hp = totalHp;
+        let keys = ["one","two","three","four"];
+        for(let i = 0; i < keys.length; i++){
+            attacks[keys[i]].resetPP();
+        }
+    };
+
 
     //Startup
     initPokemon();
@@ -234,6 +246,8 @@ let PokemonElm = function (specFilePath, draw) {
         addExp:addExp,
         renderAttack:renderAttack,
         updateAttack:updateAttack,
-        setLevel:setLevel
+        setLevel:setLevel,
+        heal:heal,
+        getHpPercent:getHpPercent
     }
 };

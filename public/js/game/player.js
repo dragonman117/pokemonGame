@@ -7,6 +7,7 @@ let Player = function (draw, canvasTileSize) {
     let grassAudio = new Audio('firered_0094.wav');
     let pos = {};
     let initPosY = 0;
+    let score = 0;
     let spec = {
         index:{
             r: 0,
@@ -122,6 +123,7 @@ let Player = function (draw, canvasTileSize) {
             if (moveInProgress) grassAudio.play();
         }
         if(ledgeCheck)ledge = ledgeCheck();
+        pos.y  = initPosY;
         if(moveInProgress){
             //Animate
             //let now = performance.now();
@@ -168,6 +170,23 @@ let Player = function (draw, canvasTileSize) {
         return pokemonList;
     };
 
+    let heal = function () {
+        pokemonList[0].heal();
+    };
+
+    let addWin = function () {
+        score += 1;
+    };
+
+    let getScore = function () {
+        return score;
+    };
+
+    let checkWin = function () {
+        if(pokemonList[0].getHP() > 0)return true;
+        return false;
+    };
+
     return {
         draw:playerDraw,
         setStartPos:setStartPos,
@@ -176,6 +195,10 @@ let Player = function (draw, canvasTileSize) {
         playerUpdate:playerUpdate,
         setCurrentTileFn:setCurrentTileFn,
         setLedgeCheckFn:setLedgeCheckFn,
-        getPokemonList:getPokemonList
+        getPokemonList:getPokemonList,
+        heal:heal,
+        addWin:addWin,
+        getScore:getScore,
+        checkWin:checkWin
     }
 };
