@@ -120,7 +120,7 @@ let Player = function (draw, canvasTileSize) {
         if(ledgeCheck)ledge = ledgeCheck();
         if(tile && tile.attribute.hasOwnProperty("grass")){
             height = 13;
-            grassAudio.play();
+            if (moveInProgress) grassAudio.play();
         }
         if(ledgeCheck)ledge = ledgeCheck();
         pos.y  = initPosY;
