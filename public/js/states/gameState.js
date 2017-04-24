@@ -23,10 +23,13 @@ function gameState(elementId, draw, storage, debug=false){
         b: {key: "DOM_VK_B", name: "B"}
     };
     let battleInProg = false;
+    let healInProg = false;
     let battleCheck = false;
     let battleProb = 0;
 
     let canvasTileSize = 16;
+
+    let conversation = NaN;
 
     let game = state(elementId, "Game");
     let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
@@ -47,6 +50,24 @@ function gameState(elementId, draw, storage, debug=false){
         gps.setMapSize(map.getMapSize());
         gps.setPlayerInitialPos(map.getStart());
         player.setStartPos(gps.getPlayerPos());
+
+        gps.setHealTriggerFn(function () {
+           healInProg = true;
+            if(!conversation){
+                let pos = gps.getCurrentMapPos();
+                let tile = map.queryPos({x:pos.x, y:(pos.y-1)});
+                if(tile.attribute.hasOwnProperty("file")){
+                    conversation = new Conversation(tile.attribute.file, draw, controlKeys, function () {
+                        conversation = NaN;
+                        healInProg = false;
+                        player.heal();
+                        setTimeout(function () { // have to set a timeout to prevent a infinite loop
+                            gps.clearHeal();
+                        },1000)
+                    })
+                }
+            }
+        });
 
         gps.setCollisionCheckFunction(function (pos) {
             let res = {
@@ -74,10 +95,10 @@ function gameState(elementId, draw, storage, debug=false){
                     exploreAudio.pause();
                     battleAudio.play();
                     battleInProg = true;
-                    console.log("i started");
                     battle.setFinishFn(function () {
                         gps.clearProb();
                         battleInProg = false;
+                        if(player.checkWin()) player.addWin();
                     });
                     battle.setPlayerPokemon(player.getPokemonList());
                 }
@@ -112,41 +133,45 @@ function gameState(elementId, draw, storage, debug=false){
             }
 
             if(!battleInProg){
-                if(inputs[KeyEvent[controlKeys.up.key]]){
-                    gps.move(now, "up");
-                    player.move(now, "up");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("up");
-                    })
+                if(!conversation){
+                    if(inputs[KeyEvent[controlKeys.up.key]]){
+                        gps.move(now, "up");
+                        player.move(now, "up");
+                        gps.onMoveEnd(function () {
+                            player.stopMove("up");
+                        })
+                    }else{
+                        gps.stopMove("up");
+                    }
+                    if(inputs[KeyEvent[controlKeys.down.key]]){
+                        gps.move(now, "down");
+                        player.move(now, "down");
+                        gps.onMoveEnd(function () {
+                            player.stopMove("down");
+                        })
+                    }else{
+                        gps.stopMove("down");
+                    }
+                    if(inputs[KeyEvent[controlKeys.right.key]]){
+                        gps.move(now, "right");
+                        player.move(now, "right");
+                        gps.onMoveEnd(function () {
+                            player.stopMove("right");
+                        })
+                    }else{
+                        gps.stopMove("right");
+                    }
+                    if(inputs[KeyEvent[controlKeys.left.key]]){
+                        gps.move(now, "left");
+                        player.move(now, "left");
+                        gps.onMoveEnd(function () {
+                            player.stopMove("left");
+                        })
+                    }else{
+                        gps.stopMove("left");
+                    }
                 }else{
-                    gps.stopMove("up");
-                }
-                if(inputs[KeyEvent[controlKeys.down.key]]){
-                    gps.move(now, "down");
-                    player.move(now, "down");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("down");
-                    })
-                }else{
-                    gps.stopMove("down");
-                }
-                if(inputs[KeyEvent[controlKeys.right.key]]){
-                    gps.move(now, "right");
-                    player.move(now, "right");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("right");
-                    })
-                }else{
-                    gps.stopMove("right");
-                }
-                if(inputs[KeyEvent[controlKeys.left.key]]){
-                    gps.move(now, "left");
-                    player.move(now, "left");
-                    gps.onMoveEnd(function () {
-                        player.stopMove("left");
-                    })
-                }else{
-                    gps.stopMove("left");
+                    conversation.update(now, inputs);
                 }
                 gps.gpsUpdate(now);//important goes before the player...
                 player.playerUpdate(now);
@@ -166,6 +191,7 @@ function gameState(elementId, draw, storage, debug=false){
             map.draw(gps.getMapRange(), gps.getOffset());
             player.draw();
             map.drawUpper(gps.getMapRange(), gps.getOffset());
+            if(conversation)conversation.draw();
         }else{
             battle.draw();
         }

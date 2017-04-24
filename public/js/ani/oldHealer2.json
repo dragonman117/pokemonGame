@@ -1,0 +1,29 @@
+{
+  "frames":6,
+  "set":{
+    "1":{
+      "1":"I love walking",
+      "2":"on days like this."
+    },
+    "2":{
+      "1":"Oh My... ... ",
+      "2":""
+    },
+    "3":{
+      "1":"Your pokemon looks ",
+      "2":"tired ... ..."
+    },
+    "4":{
+      "1":"Here let me heal ",
+      "2":"it for you. "
+    },
+    "5":{
+      "1":"The Old Woman healed",
+      "2":"your pokemon"
+    },
+    "6":{
+      "1":"There good as new. Be ",
+      "2":"safe out there!"
+    }
+  }
+}

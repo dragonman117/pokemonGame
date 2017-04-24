@@ -40,6 +40,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
     let ledge = false;
 
     let cCheckFn = NaN;
+    let healTrigFn = NaN;
+    let healstart = false;
 
     let battleProb = 0;
 
@@ -138,10 +140,15 @@ let Gps = function (draw, tileSize, canvasGrid) {
             if(nearby.me.walls[collisionCurrent]) collision = true;
             if(nearby[current] && nearby[current].walls[collisionComp[current]]) collision = true;
             if(nearby[current] && collision && current ==="down"){
-                //todo: trigger the jump animation...
                 if(nearby[current].attribute.hasOwnProperty("ledge")){
                     collision = false;
                     ledge = true;
+                }
+            }
+            if(nearby[current] && collision && movement.up && !healstart){
+                if(nearby[current].attribute.hasOwnProperty("healer")){
+                    if(healTrigFn ) healTrigFn();
+                    healstart = true;
                 }
             }
 
@@ -230,6 +237,14 @@ let Gps = function (draw, tileSize, canvasGrid) {
         return ledge;
     };
 
+    let setHealTiggerFn = function (fn) {
+        healTrigFn = fn;
+    };
+
+    let clearHeal = function () {
+        healstart = false;
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -244,6 +259,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
         getCurrentMapPos:getCurrentMapPos,
         getBattleProb:getBattleProb,
         clearProb:clearProb,
-        getLedge:getLedge
+        getLedge:getLedge,
+        setHealTriggerFn:setHealTiggerFn,
+        clearHeal:clearHeal
     }
 };
