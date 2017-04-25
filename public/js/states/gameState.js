@@ -129,6 +129,16 @@ function gameState(elementId, draw, storage, debug=false){
                 exploreAudio.pause();
                 battleAudio.currentTime = 0;
                 battleAudio.pause();
+
+                $.ajax({
+            		url: 'http://localhost:3000/saveScores',
+            		type: 'POST',
+            		error: function() { alert('POST failed'); },
+            		success: function() {
+                        
+            		}
+            	});
+
                 game.changeState("mainMenu");
             }
 
