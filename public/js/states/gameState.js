@@ -129,15 +129,11 @@ function gameState(elementId, draw, storage, debug=false){
                 exploreAudio.pause();
                 battleAudio.currentTime = 0;
                 battleAudio.pause();
-
-                $.ajax({
-            		url: 'http://localhost:3000/saveScores',
-            		type: 'POST',
-            		error: function() { alert('POST failed'); },
-            		success: function() {
-                        
-            		}
-            	});
+                fetch('/saveScores', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                    body: 'score='+player.getScore()
+                });
 
                 game.changeState("mainMenu");
             }

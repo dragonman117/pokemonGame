@@ -1,25 +1,21 @@
-/**
- * Created by timothyferrell on 3/21/17.
- *
- * Requires:
- *  State.js
- *  input.js
- *
- */
-
 function scoreState(elementId, ids, storage, debug = false) {
     let score = state(elementId, "Score State");
+    let rawScores = {};
 
     score.addInput(KeyEvent.DOM_VK_ESCAPE);
     score.addInput("clear");
 
-    keys = Object.keys(ids);
-    for(let i = 0; i < keys.length; i++){
-        ids[keys[i]] = document.getElementById(ids[keys[i]]);
-        if(storage.contains(keys[i])){
-            ids[keys[i]].innerHTML = storage.fetch(keys[i]);
+    fetch('/saveScores').then(response=>response.json()).then(json=>{
+        rawScores = json;
+        keys = Object.keys(ids);
+
+        for(let i = 0; i < keys.length; i++){
+            ids[keys[i]] = document.getElementById(ids[keys[i]]);
+            if(rawScores.hasOwnProperty(keys[i])){
+                ids[keys[i]].innerHTML = rawScores[keys[i]];
+            }
         }
-    }
+    });
 
     let scoreUpdate = function (time, inputs) {
         return new Promise(function (resolve, reject) {
@@ -37,11 +33,32 @@ function scoreState(elementId, ids, storage, debug = false) {
     };
 
     function clearScores() {
-        storage.clearAll();
-        for(let i = 0; i < keys.length; i++){
-            ids[keys[i]].innerHTML = "0";
-        }
+        fetch('/clearScores').then(response=>response.json()).then(json=>{
+            rawScores = json;
+            keys = Object.keys(ids);
+
+            for(let i = 0; i < keys.length; i++){
+                // ids[keys[i]] = document.getElementById(ids[keys[i]]);
+                if(rawScores.hasOwnProperty(keys[i])){
+                    ids[keys[i]].innerHTML = rawScores[keys[i]];
+                }
+            }
+        });
     }
+
+    score.onActivate(function(){
+        fetch('/saveScores').then(response=>response.json()).then(json=>{
+            rawScores = json;
+            keys = Object.keys(ids);
+
+            for(let i = 0; i < keys.length; i++){
+                // ids[keys[i]] = document.getElementById(ids[keys[i]]);
+                if(rawScores.hasOwnProperty(keys[i])){
+                    if(ids[keys[i]]) ids[keys[i]].innerHTML = rawScores[keys[i]];
+                }
+            }
+        });
+    });
 
     score.init(NaN, scoreUpdate);
 

@@ -1,6 +1,5 @@
 var express = require('express');
 var path = require('path');
-var fs = require('fs');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -23,28 +22,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// if I only do one callback function (like I am now), highscores isn't necessarily defined becuse readFile is asynchronous
-// if I do two callback functions though,
-//      let getScores = function(cb){ fs.readFile('./highscores.json', 'utf8', function (err, data){
-// I get the error "_http_outgoing.js:371
-//     throw new Error('Can\'t set headers after they are sent.');"
-// what is the proper way to read in the scores?
-let getScores = fs.readFile('./highscores.json', 'utf8', function (err, data){
-    if (err) throw err;
-    console.log(JSON.parse(data));
-    return JSON.parse(data);
-});
-
-app.post('/saveScores', function(req, res){
-    getScores(function (cb) {
-        if (!cb.error) {
-            console.log(cb.items);
-            res.json({test: 'post received'});
-        }
-    });
-    res.send(':D')
-});
-
 app.use('/', index);
 app.use('/users', users);
 
@@ -64,10 +41,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
-
-app.get('/saveScores', function(req, res){
-
 });
 
 module.exports = app;
