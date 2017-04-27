@@ -66,7 +66,6 @@ function input () {
                 pendingEvents.push(eventList[i])
             }
         }
-        //console.log(clickEvents);
         for(let i = 0 ;i < clickEvents.length; i++){
             pendingEvents.push(clickEvents[i]);
         }
