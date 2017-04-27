@@ -353,6 +353,14 @@ let Battle = function (draw, pokemonList, controlKeys) {
         bg.update(spec.center);
         if(beginning){
             pHealthValue = helthMaxWidth*player.getHpPercent();
+            let pHealthBar = player.getHpPercent();
+            if(pHealthBar <= .15){
+                pHealthIndex = "red";
+            }else if( pHealthBar <= .5){
+                pHealthIndex = "yellow";
+            }else{
+                pHealthIndex = "green";
+            }
             battleId = Math.floor((Math.random()*1000))%pokemonList.length;
             opponent = new PokemonElm(pokemonList[battleId], draw);
             phases.one = true;

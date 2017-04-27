@@ -32,7 +32,7 @@ function gameState(elementId, draw, storage, debug=false){
     let conversation = NaN;
 
     let game = state(elementId, "Game");
-    let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
+    let map = new Map("/js/maps/finalMap.json", draw, canvasTileSize);
     let gps = new Gps(draw, canvasTileSize, 13);
     let battle = new Battle(draw, pokemonList,controlKeys);
     let player = new Player(draw, canvasTileSize);
@@ -63,6 +63,38 @@ function gameState(elementId, draw, storage, debug=false){
                         player.heal();
                         setTimeout(function () { // have to set a timeout to prevent a infinite loop
                             gps.clearHeal();
+                        },1000)
+                    })
+                }
+            }
+        });
+
+        gps.setConvTriggerFn(function () {
+            healInProg = true;
+            if(!conversation){
+                let pos = gps.getCurrentMapPos();
+                let tile = map.queryPos({x:pos.x, y:(pos.y-1)});
+                if(tile.attribute.hasOwnProperty("file")){
+                    let file = tile.attribute.file;
+                    //check if we have the package
+                    if(tile.attribute.hasOwnProperty("mail")){
+                        player.aquireMail();
+                    }
+                    if(tile.attribute.hasOwnProperty("mom")){
+                        if(player.hasMail()){
+                            file = tile.attribute.file2;
+                            fetch('/saveScores', {
+                                method: 'POST',
+                                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                                body: 'score='+player.getScore()
+                            });
+                        }
+                    }
+                    conversation= new Conversation(file, draw,controlKeys, function () {
+                        conversation = NaN;
+                        healInProg = false;
+                        setTimeout(function () {
+                            gps.clearConv();
                         },1000)
                     })
                 }
@@ -129,11 +161,7 @@ function gameState(elementId, draw, storage, debug=false){
                 exploreAudio.pause();
                 battleAudio.currentTime = 0;
                 battleAudio.pause();
-                fetch('/saveScores', {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-                    body: 'score='+player.getScore()
-                });
+
 
                 game.changeState("mainMenu");
             }

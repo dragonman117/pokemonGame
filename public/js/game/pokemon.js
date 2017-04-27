@@ -57,7 +57,9 @@ let PokemonElm = function (specFilePath, draw) {
         name = rawSpec.name;
         hp = rawSpec.hp;
         totalHp = rawSpec.hp;
-        level = rawSpec.level;
+        if(level === 0){
+            level = rawSpec.level;
+        }
         avitar = draw.ImgSprite({
             index:drawFace[currentDraw],
             position:posSets[currentDraw],

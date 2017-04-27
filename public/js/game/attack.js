@@ -33,8 +33,8 @@ let Attack = function(specFilePath, draw){
         particlesA = ParticleSystem({
             image: rawSpec.img,
             center: {x: 150, y: 78},
-            speed:{mean: 3, stdev: 9},
-            lifetime: {mean:5, stdev: .5}
+            speed:{mean: 6, stdev: 9},
+            lifetime: {mean:10, stdev: .5}
         }, draw);
         particlesB = ParticleSystem({
             image: rawSpec.img,
