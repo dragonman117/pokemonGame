@@ -3,7 +3,7 @@
   "set":{
     "1":{
       "1":"I have a very",
-      "2":"very important package"
+      "2":"very important package."
     },
     "2":{
       "1":"I am waiting for.",
@@ -23,11 +23,11 @@
     },
     "6":{
       "1":"Your strong pokemon",
-      "2":"should protect you"
+      "2":"should protect you."
     },
     "7":{
       "1":"I will cook your",
-      "2":"favorite dinner for you"
+      "2":"favorite dinner for you."
     }
   }
 }

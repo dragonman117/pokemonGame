@@ -2,27 +2,27 @@
   "frames":6,
   "set":{
     "1":{
-      "1":"Its a beautiful day ",
-      "2":"today isn't it!"
+      "1":"It's a beautiful day ",
+      "2":"today, isn't it?!"
     },
     "2":{
       "1":"I saw you battling ",
-      "2":"in the grass"
+      "2":"in the grass."
     },
     "3":{
       "1":"It looks like your ",
       "2":"pokemon is tired ..."
     },
     "4":{
-      "1":"Here let me heal ",
+      "1":"Here, let me heal ",
       "2":"it for you. "
     },
     "5":{
       "1":"The Old Man healed  ",
-      "2":"your pokemon"
+      "2":"your pokemon."
     },
     "6":{
-      "1":"There good as new. Be ",
+      "1":"They're good as new. Be ",
       "2":"safe out there!"
     }
   }

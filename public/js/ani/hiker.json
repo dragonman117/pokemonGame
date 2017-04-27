@@ -2,11 +2,11 @@
   "frames":6,
   "set":{
     "1":{
-      "1":"It's Dangerous to",
-      "2":"be here in the mountains"
+      "1":"It's dangerous to",
+      "2":"be here in the mountains."
     },
     "2":{
-      "1":"Oh, your not",
+      "1":"Oh, you're not",
       "2":"alone ... ..."
     },
     "3":{
@@ -14,15 +14,15 @@
       "2":"pokemon to protect you."
     },
     "4":{
-      "1":"Here let me heal ",
+      "1":"Here, let me heal ",
       "2":"it for you. "
     },
     "5":{
       "1":"Hiker Bob healed  ",
-      "2":"your pokemon"
+      "2":"your pokemon."
     },
     "6":{
-      "1":"There good as new. Be ",
+      "1":"They're good as new. Be ",
       "2":"safe out there!"
     }
   }

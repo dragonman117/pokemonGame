@@ -2,8 +2,8 @@
   "frames":7,
   "set":{
     "1":{
-      "1":"What a nice young man",
-      "2":"where are you off to today"
+      "1":"What a nice young man,",
+      "2":"Where are you off to today?"
     },
     "2":{
       "1":"Oh... ... You",
@@ -11,22 +11,22 @@
     },
     "3":{
       "1":"You will need to go to",
-      "2":"the post office in Kanto"
+      "2":"the post office in Kanto."
     },
     "4":{
       "1":"Your pokemon looks",
-      "2":"tired after defending you"
+      "2":"tired after defending you."
     },
     "5":{
-      "1":"Here let me heal",
+      "1":"Here, let me heal",
       "2":"him for you ... ..."
     },
     "6":{
       "1":"Old Woman healed ",
-      "2":"Your Pokemon."
+      "2":"your Pokemon."
     },
     "7":{
-      "1":"There good as new. Be ",
+      "1":"They're good as new. Be ",
       "2":"safe out there!"
     }
   }
