@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="css/style.css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 <body>
     <div class="container">
@@ -13,60 +14,79 @@
         <div class="state playBG" id="main" hidden>
             <div class="col-xs-12 platform">
                 <img src="img/pokemonLogo.png" id="logo"/><br>
-                <button class="btn btn-primary" data-event="play">New Game</button><br>
-                <button class="btn btn-primary" data-event="score">High Scores</button><br>
-                <button class="btn btn-primary" data-event="controls">Controls</button><br>
-                <button class="btn btn-primary" data-event="credits">Credits</button><br>
+                <div class="btn-container">
+                    <button class="btn btn-primary" data-event="play">New Game</button><br>
+                    <button class="btn btn-primary" data-event="score">High Scores</button><br>
+                    <button class="btn btn-primary" data-event="controls">Controls</button><br>
+                    <button class="btn btn-primary" data-event="credits">Credits</button><br>
+                </div>
             </div>
         </div>
         <div class="state playBG" id="scores" hidden>
             <div class="col-xs-12 platform">
-                <table>
-                    <tr>
-                        <th>#</th>
-                        <th>Score</th>
-                    </tr>
-                    <tr>
-                        <td>1.</td>
-                        <td id="hs1">0</td>
-                    </tr>
-                    <tr>
-                        <td>2.</td>
-                        <td id="hs2">0</td>
-                    </tr>
-                    <tr>
-                        <td>3.</td>
-                        <td id="hs3">0</td>
-                    </tr>
-                    <tr>
-                        <td>4.</td>
-                        <td id="hs4">0</td>
-                    </tr>
-                    <tr>
-                        <td>5.</td>
-                        <td id="hs5">0</td>
-                    </tr>
-                </table>
-                <button class="btn btn-primary" data-event="clear">Reset Scores</button>
+                <div class="escape"><- ESC</div>
+                <h1>High Scores</h1>
+                <div class="btn-container">
+                    <table>
+                        <tr>
+                            <td>1.</td>
+                            <td id="hs1">0</td>
+                        </tr>
+                        <tr>
+                            <td>2.</td>
+                            <td id="hs2">0</td>
+                        </tr>
+                        <tr>
+                            <td>3.</td>
+                            <td id="hs3">0</td>
+                        </tr>
+                        <tr>
+                            <td>4.</td>
+                            <td id="hs4">0</td>
+                        </tr>
+                        <tr>
+                            <td>5.</td>
+                            <td id="hs5">0</td>
+                        </tr>
+                    </table>
+                    <button class="btn btn-primary" data-event="clear">Reset Scores</button>
+                </div>
             </div>
         </div>
         <div class="state playBG" id="controls" hidden>
-            <button class="btn btn-primary" data-event="up">Update Navigate Up</button><h3>Set To: <span id="up">up arrow</span></h3><br>
-            <button class="btn btn-primary" data-event="down">Update Navigate Down</button><h3>Set To: <span id="down">down arrow</span></h3><br>
-            <button class="btn btn-primary" data-event="left">Update Navigate Left</button><h3>Set To: <span id="left">left arrow</span></h3><br>
-            <button class="btn btn-primary" data-event="right">Update Navigate Right</button><h3>Set To: <span id="right">right arrow</span></h3><br>
-            <button class="btn btn-primary" data-event="start">Update Start</button><h3>Set To: <span id="start">enter</span></h3><br>
-            <button class="btn btn-primary" data-event="a">Update A</button><h3>Set To: <span id="a">a</span></h3><br>
-            <button class="btn btn-primary" data-event="b">Update B</button><h3>Set To: <span id="b">b</span></h3><br>
+            <div class="escape"><- ESC</div>
+            <div id="btnUp">
+                <button class="btn btn-icon" id="btnUpSel" data-event="up"><i class="fa fa-pencil-square-o" aria-hidden="true" data-event="up"></i></button><h3 id="btnUpVal"><span id="up">up arrow</span></h3>
+                <div style="clear: both;"></div>
+            </div>
+            <div id="btnDown">
+                <button class="btn btn-icon" data-event="down"><i class="fa fa-pencil-square-o" aria-hidden="true" data-event="down"></i></button><h3><span id="down">down arrow</span></h3>
+                <div style="clear: both;"></div>
+            </div>
+            <div id="btnLeft">
+                <button class="btn btn-icon" data-event="left"><i class="fa fa-pencil-square-o" aria-hidden="true" data-event="left"></i></button><h3><span id="left">left arrow</span></h3>
+                <div style="clear: both;"></div>
+            </div>
+            <div id="btnRight">
+                <button class="btn btn-icon" data-event="right"><i class="fa fa-pencil-square-o" aria-hidden="true" data-event="right"></i></button><h3><span id="right">right arrow</span></h3>
+                <div style="clear: both;"></div>
+            </div>
+            <div id="btnA">
+                <button class="btn btn-icon" data-event="a"><i class="fa fa-pencil-square-o" aria-hidden="true" data-event="a"></i></button><h3><span id="a">a</span></h3>
+            </div>
+            <div id="btnB">
+                <button class="btn btn-icon" data-event="b"><i class="fa fa-pencil-square-o" aria-hidden="true" data-event="b"></i></button><h3><span id="b">b</span></h3>
+            </div>
         </div>
         <div class="state playBG" id="credits" hidden>
-            <div class="col-xs-12 platform">
-                Created by TJ Ferrell and Noelle Troester-Solbrig
+            <div class="escape"><- ESC</div>
+            <div class="btn-container">
+                Created by: <br/> TJ Ferrell and Noelle Troester-Solbrig
             </div>
         </div>
         <div class="state" id="load" >
             This is load state
-            <canvas id="tstCanvas" class="no-border" width="1400" height="1600"></canvas>
+            <canvas id="tstCanvas" class="no-border" width="208" height="208"></canvas>
         </div>
     </div>
 

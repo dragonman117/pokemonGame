@@ -12,14 +12,15 @@
 let Pokemon = {};
 Pokemon.debug = false;
 
-let tstCanvas = document.getElementById("tstCanvas");
-let height = tstCanvas.offsetHeight;
-
-let states = document.getElementsByClassName("state");
-for(let i = 0; i < states.length; i++){
-    let tmp = states.item(i);
-    //tmp.setAttribute("style","min-height: " + height + "px;");
-}
+// let tstCanvas = document.getElementById("tstCanvas");
+// let height = tstCanvas.offsetHeight;
+//
+// let states = document.getElementsByClassName("state");
+// for(let i = 0; i < states.length; i++){
+//     let tmp = states.item(i);
+//     console.log(height);
+//     //tmp.setAttribute("style","min-height: " + height + "px;");
+// }
 
 let highScoreId = {"first":"hs1", "second":"hs2", "third": "hs3", "fourth":"hs4", "fifth":"hs5"};
 // let controlsId = {"controlUp": "up", "controlDown": "down", "controlLeft": "left", "controlRight": "right", "controlStart": "start", "controlA": "a", "controlB": "b"};
