@@ -49,7 +49,6 @@ function controlState(elementId, storage, input, debug=false){
     down.innerHTML = controlKeys.down.name;
     left.innerHTML = controlKeys.left.name;
     right.innerHTML = controlKeys.right.name;
-    start.innerHTML = controlKeys.start.name;
     a.innerHTML = controlKeys.a.name;
     b.innerHTML = controlKeys.b.name;
 
