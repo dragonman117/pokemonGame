@@ -43,6 +43,9 @@ let Gps = function (draw, tileSize, canvasGrid) {
     let healTrigFn = NaN;
     let healstart = false;
 
+    let convTrigFn = NaN;
+    let convStart = false;
+
     let battleProb = 0;
 
 
@@ -151,7 +154,12 @@ let Gps = function (draw, tileSize, canvasGrid) {
                     healstart = true;
                 }
             }
-
+            if(nearby[current] && collision && movement.up && !convStart){
+                if(nearby[current].attribute.hasOwnProperty("conversation")){
+                    if(convTrigFn ) convTrigFn();
+                    convStart = true;
+                }
+            }
 
             let timeDiff = now - movement[current];
             if(timeDiff < 250){
@@ -245,6 +253,14 @@ let Gps = function (draw, tileSize, canvasGrid) {
         healstart = false;
     };
 
+    let setConvTriggerFn = function (fn) {
+        convTrigFn = fn;
+    };
+
+    let clearConv = function () {
+        convStart = false;
+    };
+
     return {
         getMapRange:getMapRange,
         setPlayerInitialPos:setPlayerInitialPos,
@@ -261,6 +277,8 @@ let Gps = function (draw, tileSize, canvasGrid) {
         clearProb:clearProb,
         getLedge:getLedge,
         setHealTriggerFn:setHealTiggerFn,
-        clearHeal:clearHeal
+        clearHeal:clearHeal,
+        setConvTriggerFn:setConvTriggerFn,
+        clearConv:clearConv
     }
 };

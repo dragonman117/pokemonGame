@@ -1,0 +1,33 @@
+{
+  "frames":7,
+  "set":{
+    "1":{
+      "1":"I have a very",
+      "2":"very important package"
+    },
+    "2":{
+      "1":"I am waiting for.",
+      "2":"... ... ..."
+    },
+    "3":{
+      "1":"I have been waiting",
+      "2":"for so long. ... ..."
+    },
+    "4":{
+      "1":"I know you can",
+      "2":"pick it up for me at"
+    },
+    "5":{
+      "1":"the Kanto post ",
+      "2":"office! "
+    },
+    "6":{
+      "1":"Your strong pokemon",
+      "2":"should protect you"
+    },
+    "7":{
+      "1":"I will cook your",
+      "2":"favorite dinner for you"
+    }
+  }
+}

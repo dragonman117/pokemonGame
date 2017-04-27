@@ -32,7 +32,7 @@ function gameState(elementId, draw, storage, debug=false){
     let conversation = NaN;
 
     let game = state(elementId, "Game");
-    let map = new Map("/js/maps/collisionsTest.json", draw, canvasTileSize);
+    let map = new Map("/js/maps/finalMap.json", draw, canvasTileSize);
     let gps = new Gps(draw, canvasTileSize, 13);
     let battle = new Battle(draw, pokemonList,controlKeys);
     let player = new Player(draw, canvasTileSize);
@@ -63,6 +63,36 @@ function gameState(elementId, draw, storage, debug=false){
                         player.heal();
                         setTimeout(function () { // have to set a timeout to prevent a infinite loop
                             gps.clearHeal();
+                        },1000)
+                    })
+                }
+            }
+        });
+
+        gps.setConvTriggerFn(function () {
+            healInProg = true;
+            if(!conversation){
+                let pos = gps.getCurrentMapPos();
+                let tile = map.queryPos({x:pos.x, y:(pos.y-1)});
+                if(tile.attribute.hasOwnProperty("file")){
+                    let file = tile.attribute.file;
+                    //check if we have the package
+                    if(tile.attribute.hasOwnProperty("mail")){
+                        player.aquireMail();
+                    }
+                    if(tile.attribute.hasOwnProperty("mom")){
+                        if(player.hasMail()){
+                            console.log("hasMail!!!!!");
+                            file = tile.attribute.file2;
+                        }else{
+                            console.log("not yet");
+                        }
+                    }
+                    conversation= new Conversation(file, draw,controlKeys, function () {
+                        conversation = NaN;
+                        healInProg = false;
+                        setTimeout(function () {
+                            gps.clearConv();
                         },1000)
                     })
                 }

@@ -36,6 +36,8 @@ let Player = function (draw, canvasTileSize) {
     let ready = false;
     let speedDivisor = 125;
 
+    let mail = false;
+
     let ledgeCheck = NaN;
     let ledge = false;
 
@@ -187,6 +189,14 @@ let Player = function (draw, canvasTileSize) {
         return false;
     };
 
+    let hasMail = function () {
+        return mail;
+    };
+
+    let aquireMail = function () {
+        mail = true;
+    };
+
     return {
         draw:playerDraw,
         setStartPos:setStartPos,
@@ -199,6 +209,8 @@ let Player = function (draw, canvasTileSize) {
         heal:heal,
         addWin:addWin,
         getScore:getScore,
-        checkWin:checkWin
+        checkWin:checkWin,
+        hasMail:hasMail,
+        aquireMail:aquireMail
     }
 };

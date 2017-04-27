@@ -1,0 +1,33 @@
+{
+  "frames":7,
+  "set":{
+    "1":{
+      "1":"You Got It!",
+      "2":""
+    },
+    "2":{
+      "1":"Thank you so",
+      "2":"much!"
+    },
+    "3":{
+      "1":"...",
+      "2":""
+    },
+    "4":{
+      "1":"You should be",
+      "2":"proud of a job well done."
+    },
+    "5":{
+      "1":"...",
+      "2":""
+    },
+    "6":{
+      "1":"You have finished",
+      "2":"the game!"
+    },
+    "7":{
+      "1":"Thanks for playing",
+      "2":"       - TJ & Noelle"
+    }
+  }
+}
