@@ -82,10 +82,12 @@ function gameState(elementId, draw, storage, debug=false){
                     }
                     if(tile.attribute.hasOwnProperty("mom")){
                         if(player.hasMail()){
-                            console.log("hasMail!!!!!");
                             file = tile.attribute.file2;
-                        }else{
-                            console.log("not yet");
+                            fetch('/saveScores', {
+                                method: 'POST',
+                                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                                body: 'score='+player.getScore()
+                            });
                         }
                     }
                     conversation= new Conversation(file, draw,controlKeys, function () {
@@ -159,11 +161,7 @@ function gameState(elementId, draw, storage, debug=false){
                 exploreAudio.pause();
                 battleAudio.currentTime = 0;
                 battleAudio.pause();
-                fetch('/saveScores', {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-                    body: 'score='+player.getScore()
-                });
+
 
                 game.changeState("mainMenu");
             }
